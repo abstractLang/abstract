@@ -1,0 +1,21 @@
+.warningBar {
+    
+    padding: 5px;
+    text-align: center;
+    font-size: 20px;
+    color: white;
+
+    background: repeating-linear-gradient(
+            120deg,
+            #000000 0%,
+            #000000 30px,
+            #2e2e2e 30px,
+            #2e2e2e 90px,
+            #000000 90px,
+            #000000 120px
+        );
+
+}
+.warningBar b {
+    font-weight: bolder;
+}

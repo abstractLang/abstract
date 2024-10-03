@@ -1,0 +1,10 @@
+lumi:
+  name: Lumi
+  title: Abstract's Development Leader
+  url: https://github.com/lumi2021
+  image_url: https://github.com/lumi2021.png
+  page:
+    permalink: '/lumi'
+  socials:
+    linkedin: milaaraujodev
+    github: lumi2021

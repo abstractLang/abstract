@@ -1,0 +1,29 @@
+devlog:
+  label: Dev Log
+  permalink: /devlog
+  description: Quick development logs
+
+news:
+  label: News
+  permalink: /news
+  description: News about abstract language development
+
+announcements:
+  label: Announcements
+  permalink: /announcements
+  description: General news and important things
+
+bug-fix:
+  label: Bug Fix
+  permalink: /bug-fix
+  description: Patch notes about bugs and fixes
+
+patch-notes:
+  label: Patch Notes
+  permalink: /patch-notes
+  description: General patch notes
+
+dev-test:
+  label: Website Development
+  permalink: /dev-test
+  description: nothing important, will be removed soon!
