@@ -3,6 +3,8 @@ sidebar_position: 3
 ---
 
 # Data Collections
+:::info[Under Construction]
+:::
 
 Data collections are important components of a program, easily handling huge amounts of data. \
 In abstract, are considerated data collections Arrays, Linked Lists, Queues, Stacks and Dictionaries, all of these
@@ -10,6 +12,8 @@ built-in data types or structures.
 
 ---
 ## Arrays
+:::warning[Not Implemented!]
+:::
 
 Array lists are one of the most basic collection type in programming. They are made based on the concept of a contiguous
 sequence of data in the memory that can be indexed by it position on the list

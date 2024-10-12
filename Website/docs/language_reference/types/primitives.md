@@ -2,10 +2,9 @@
 sidebar_position: 2
 ---
 
+# Other Primitive Types
 :::info[Under Construction]
 :::
-
-# Other Primitive Types
 
 Abstract also have some other primitive types that can't be considerated numbers.
 Some of then exists to create some abstractions with complex collections of
@@ -13,6 +12,8 @@ numerical values or create type encapsulation.
 
 ---
 ## Booleans
+:::warning[Not Implemented!]
+:::
 
 Booleans are types that can only represent the binary values `true` or `false`.
 These two values are extremely important to handle conditionals or hold simple
@@ -34,6 +35,8 @@ The cake is a lie!
 
 ---
 ## Strings
+:::warning[Not Implemented!]
+:::
 
 Strings are a data structure that is able to store text data. A string can be
 used to store and reproduce text characters easily. \
@@ -81,7 +84,6 @@ myChar = myString[7] # 'W'
 
 ---
 ## Flags
-
 :::warning[Not Implemented!]
 :::
 
@@ -105,7 +107,7 @@ if !stuff.HaveFork => Std.Console.log("Bro need a fork!")
 if !stuff.HaveKnife => Std.Console.log("Bro need a knife!")
 if !stuff.HavePlate => Std.Console.log("Bro need a plate!")
 
-Std.Console.log("stuff have only " + Std.Type.sizeof(stuff) + "byte(s) in memory!");
+Std.Console.log("stuff have only " + Std.Types.sizeof(stuff) + "byte(s) in memory!");
 ```
 ```text title="Console Output"
 Bro need a fork!

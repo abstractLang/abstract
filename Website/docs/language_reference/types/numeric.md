@@ -3,6 +3,8 @@ sidebar_position: 1
 ---
 
 # Numeric Types
+:::info[Under Construction]
+:::
 
 Numbers are the base of math and needed in every logical process. \
 The abstract language allows the user to choose betwen a long list
@@ -11,6 +13,8 @@ of their application.
 
 ---
 ## Integer Numbers
+:::warning[Not Implemented!]
+:::
 
 The most simple way of representing numbers is with integers. Integers
 represents a aways complete value, never allowing any decimal point.
@@ -49,6 +53,8 @@ programming language:
 
 ---
 ## Floating Numbers
+:::warning[Not Implemented!]
+:::
 
 Floating numbers are more complex numeric values used to reproduce fractions.
 

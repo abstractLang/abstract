@@ -83,8 +83,8 @@ const config: Config = {
       copyright: `Copyright © ${new Date().getFullYear()} Abstract Programming Language. Built with Docusaurus.`,
     },
     prism: {
-      theme: prismThemes.github,
-      darkTheme: prismThemes.dracula,
+      theme: prismThemes.oneLight,
+      darkTheme: prismThemes.okaidia,
     },
   } satisfies Preset.ThemeConfig,
 };
