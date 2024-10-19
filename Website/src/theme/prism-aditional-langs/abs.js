@@ -12,7 +12,7 @@ Prism.languages.abs = {
 		greedy: true
 	},
 
-	'keyword': /\b(using|namespace|func|struct|let|const|new|true|false|[iu]\d+|byte|f32|f64|float|double|string|char|Flag)\b/,
+	'keyword': /\b(import|from|namespace|func|struct|let|const|new|true|false|[iu]\d+|byte|f32|f64|float|double|string|char|Flag|as|in|for|while|break|if|elif|else)\b/,
 
     'symbol': /\b@[a-z_]\w*/i,
 	'function': /(?<!@)\b[a-z_]\w*(?=\s*\()/i,
