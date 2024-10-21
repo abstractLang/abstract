@@ -28,9 +28,8 @@ const config: Config = {
           sidebarPath: './sidebars.ts',
           showLastUpdateAuthor: true,
           showLastUpdateTime: true,
-          editUrl: 'https://github.com/lumi2021/abstract/tree/main/Website',
+          editUrl: 'https://github.com/abstractLang/abstract/tree/main/Website',
           admonitions: {
-            keywords: ['not-implemented'],
             extendDefaults: true
           }
         },
@@ -41,7 +40,7 @@ const config: Config = {
             xslt: true,
           },
 
-          editUrl: 'https://github.com/lumi2021/abstract/tree/main/Website',
+          editUrl: 'https://github.com/abstractLang/abstract/tree/main/Website',
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
@@ -70,7 +69,7 @@ const config: Config = {
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/lumi2021/abstract',
+          href: 'https://github.com/abstractLang/abstract',
           label: 'GitHub',
           position: 'right',
         },
