@@ -83,39 +83,6 @@ myChar = myString[7] # 'W'
 ```
 
 ---
-## Flags
-:::warning[Not Implemented!]
-:::
-
-
-Flags are collections of packad booleans. \
-While 8 boolean variables needs a total of 8 bytes to be stored in memory,
-flags will be compressed into bits, making the same length coast only 1 byte
-in memory.
-
-```abs
-# Declaration of a flag type!
-Flag MyFlags {
-    HaveFork,
-    HaveKnife,
-    HavePlate
-}
-
-let MyFlags stuff = (false, true, false)
-
-if !stuff.HaveFork => Std.Console.log("Bro need a fork!")
-if !stuff.HaveKnife => Std.Console.log("Bro need a knife!")
-if !stuff.HavePlate => Std.Console.log("Bro need a plate!")
-
-Std.Console.log("stuff have only " + Std.Types.sizeof(stuff) + "byte(s) in memory!");
-```
-```text title="Console Output"
-Bro need a fork!
-Bro need a plate!
-stuff have only 1 byte(s) in memory!
-```
-
----
 ## Enums
 :::warning[Not Implemented!]
 :::

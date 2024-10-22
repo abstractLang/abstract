@@ -9,11 +9,13 @@ namespace Std.Types
 
 `Std.Types` implements all the primitive and basic types of the language.
 
+---
 ## Namespaces
 | Namespace | Description |
 |:---------:|:------------|
 | Collections | Implementation of data collection abstractions |
 
+---
 ## Structures
 | Structure | Alias | Description |
 |:---------:|:-----:|:------------|
@@ -30,6 +32,8 @@ namespace Std.Types
 | UnsignedInteger32 | u32 | Structure to manipulate 32-bit unsigned integers |
 | UnsignedInteger64 | u64 | Structure to manipulate 64-bit unsigned integers |
 | UnsignedInteger128 | u128 | Structure to manipulate 128-bit unsigned integers |
+| SingleFloating | f32 | Structure to manipulate single precision floating point numbers |
+| DoubleFloating | f64 | Structure to manipulate double precision floating point numbers |
 | Boolean | bool | Structure to manipulate boolean values |
 | String | string | Structure to manipulate text and strings |
 | Void | void | Structure that represents no type |

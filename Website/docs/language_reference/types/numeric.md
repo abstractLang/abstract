@@ -27,7 +27,7 @@ to declarate the kind of the integer (signed or unsigned) and a number to
 declarate the size, in bits, that this data will coast in memory.
 
 examples of valid integer types are:
-```
+```abs
 i8   # signed 8-bit (1 byte) integer
 u16  # unsigned 16-bit integer
 i128 # signed 128-bit integer

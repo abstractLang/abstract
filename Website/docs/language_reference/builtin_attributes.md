@@ -32,4 +32,6 @@ some cool random attributes from my test code and Std lib:
 
 @ImplicitConvert
 @overrideOperator(string)
+
+@defineGlobal(.. string)
 ```

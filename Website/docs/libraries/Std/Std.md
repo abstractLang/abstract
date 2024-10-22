@@ -7,11 +7,9 @@
 namespace Std
 ```
 
-The uhhhhh \
-Abstract Standard library uhhhhhhhhhhhhhhhhhhhhhh \
-with standard methods and uhh \
-i will see what i can put here
+`Std` is the base namespace of the Abstract's standard library.
 
+---
 ## Namespaces
 | Namespace | Description |
 |:---------:|:------------|
