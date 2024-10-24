@@ -28,7 +28,7 @@ import { Console } from Std
 # The function main will ask for a list of strings
 # to be called. It also declarate a return type
 # 'void', meaning it will not return any valid data.
-@public void main([]string args) {
+@public func void main([]string args) {
 
     # Let's declarate 3 variable data spaces in program's
     # memory, one for a signed byte, short and integer.
@@ -57,10 +57,10 @@ import { Console } from Std
 }
 
 # Overloads of the function 'foo'
-@public void foo(i8 value) {
+@public func void foo(i8 value) {
     log("The value is a byte and it is " + value + "!")
 }
-@public void foo(i32 value) {
+@public func void foo(i32 value) {
     log("The value is a int32 and it is " + value + "!")
 }
 

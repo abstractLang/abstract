@@ -34,4 +34,5 @@ some cool random attributes from my test code and Std lib:
 @overrideOperator(string)
 
 @defineGlobal(.. string)
+@extensor
 ```
