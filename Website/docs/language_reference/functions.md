@@ -22,7 +22,7 @@ func void foo() {
 foo()
 ```
 ```text title="Console Output"
-foo Called!
+foo called!
 ```
 
 A function can be called by it reference followed by a opening and closing parenthesis `()` as follows:
