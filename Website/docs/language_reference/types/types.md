@@ -64,12 +64,9 @@ import { Console } from Std
     log("The value is a int32 and it is " + value + "!")
 }
 
-
-### Console Output:
-
+```
+```text title="Console Output"
 The value is a byte and it is 8!
 The value is a int32 and it is 32!
 The value is a int32 and it is 16!
-
-###
 ```

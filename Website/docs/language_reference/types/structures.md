@@ -120,7 +120,7 @@ struct Biography {
 ```
 
 ---
-### Static and Instance Methods
+### Static Functions and Methods
 :::warning[Not Implemented!]
 :::
 
@@ -128,6 +128,13 @@ struct Biography {
 ## Object-Oriented Programming
 :::warning[Not Implemented!]
 :::
+
+Object-Oriended Programming in a programming paradigm that uses objects concept to develop programs.
+Even Abstract being mainly based on procedural programming paradigm, Object-Orientation can be implemented
+using structures.
+
+In OOP, a object is refered as a structure that includes fields and precesses, like functions. Also,
+the object-orientation have 3 important concepts that objects need to be able to follow.
 
 ---
 ### Structures and Classes

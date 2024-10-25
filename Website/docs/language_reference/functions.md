@@ -96,10 +96,3 @@ func void writeText(i32 value) {
 ```
 </details>
 :::
-
----
-## Methods
-
-:::info
-To have a better understanding of this content, make sure you is already familiar with [structures and OOP concepts](/docs/language_reference/types/structures)
-:::

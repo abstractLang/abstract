@@ -5,6 +5,8 @@ sidebar_position: 5
 # Packet
 :::info[Under Construction]
 :::
+:::warning[Not Implemented!]
+:::
 
 While a `struct` may reorganize it layout on memory in unexpected ways, packets are made to be a exact
 1:1 map of it implementation to memory.
@@ -27,6 +29,8 @@ packet(8) MyDinner {
 ```
 
 The parameter x in `packet(x)` indicates the total size, in bits, of the object in memory.
+The parameter is, however, optional and will be automatically calculated by the compiler if
+not provided. \
 Inside the packet, you can include primitives, other packets or references to most complex
 types.
 
@@ -194,6 +198,26 @@ string[500] # A string with max. 499 characters
 string[20 + 1] # A string with max. 20 characters
 string[1] # A string with 0 characters
 ```
+
+### Packets
+
+Packets references can be included inside other packets.
+
+```abs
+packet NullableInteger32 {
+    bool isNull,
+    u32 address
+}
+
+packet Attributes {
+    NullableInteger32 stength,
+    NullableInteger32 magic,
+    NullableInteger32 stealth,
+}
+```
+
+### Structures and References
+TODO
 
 ### Offset
 
