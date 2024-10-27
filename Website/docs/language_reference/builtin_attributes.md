@@ -1,10 +1,12 @@
 ---
-sidebar_position: 6
+sidebar_position: 8
 ---
 
 # Built-in Attributes
 
 :::info[Under Construction]
+:::
+:::warning[Not Implemented!]
 :::
 
 Attributes are the things with the `@` prefix
