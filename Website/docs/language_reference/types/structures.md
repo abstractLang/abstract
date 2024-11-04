@@ -35,18 +35,9 @@ myBio.myGithub = "lumi2021"
 ```
 
 the structure `Biography` on the example have 3 fields, an integer `myAge` and two strings `myName` and `myGithub`.
-The resulting size of this structure, in memory, is the sum of all it component sizes.
-```abs
-# Pseudocode
-...
-
-let u8 myGlobalAge
-let string myGlobalName
-let string myGlobalGithub
-
-sizeof(myBio) == sizeof(myGlobalAge) + sizeof(myGlobalName) + sizeof(myGlobalGithub)
-# equivalent to: 72 = 8 + 32 + 32
-```
+The resulting size of this structure, in memory, will be, *in most cases*, the sum of all fields  plus a aditional
+constant pointer that indicates it type in a global type table. This implicit data is important to allow the program
+to know the type of the structure anywhere during runtime.
 ---
 ### Constructors
 

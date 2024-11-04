@@ -51,13 +51,13 @@ let MyDinner dinner = MyDinner {
 
 and you can use the dot operator (`.`) to acess it fields:
 ```abs
-    if !dinner.hasFork => Std.Console.log("Comrade doesn't have a fork!");
-    if !dinner.hasSpoon => Std.Console.log("Comrade doesn't have a spoon!");
-    if !dinner.hasKnife => Std.Console.log("Comrade doesn't have a knife!");
-    if !dinner.hasPlate => Std.Console.log("Comrade doesn't have a plate!");
+    if !dinner.hasFork Std.Console.log("Comrade doesn't have a fork!");
+    if !dinner.hasSpoon Std.Console.log("Comrade doesn't have a spoon!");
+    if !dinner.hasKnife Std.Console.log("Comrade doesn't have a knife!");
+    if !dinner.hasPlate Std.Console.log("Comrade doesn't have a plate!");
 
-    if !dinner.hungerLevel > 10 => Std.Console.log("Starving!");
-    else if !dinner.hungerLevel > 5 => Std.Console.log("Hungry!");
+    if !dinner.hungerLevel > 10 Std.Console.log("Starving!");
+    elif !dinner.hungerLevel > 5 Std.Console.log("Hungry!");
 ```
 
 ```text title="Console Output"
@@ -86,7 +86,7 @@ packet(8) Character {
 
 @static func void addExp(*FixedPoint _self, u8 e) {
     _self.exp += e
-    if Assembly.flagsRegister.Overflow => level++
+    if (Std.Assembly.flagsRegister.Overflow) level++
 }
 
 let Character jake = NewChar()
@@ -100,7 +100,7 @@ Or using the extensor attribute to extends the packet's symbol with static funct
 ```abs
 @static @extensor func void addExp(*FixedPoint _self, u8 e) {
     _self.exp += e
-    if Assembly.flagsRegister.Overflow => level++
+    if (Std.Assembly.flagsRegister.Overflow) level++
 }
 
 ...
@@ -126,7 +126,7 @@ packet(8) Character {
 
     @static @extensor func void addExp(*FixedPoint _self, u8 e) {
         _self.exp += e
-        if Assembly.flagsRegister.Overflow => level++
+        if (Std.Assembly.flagsRegister.Overflow) level++
     }
 
 }
