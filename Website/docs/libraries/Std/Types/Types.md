@@ -1,6 +1,12 @@
-# Types
+---
+title: Types
+---
 
-:::info[Under Construction]
+# Std.Types
+
+:::under-construction
+:::
+:::not-implemented
 :::
 
 ```abs
@@ -11,9 +17,9 @@ namespace Std.Types
 
 ---
 ## Namespaces
-| Namespace | Description |
-|:---------:|:------------|
-| Collections | Implementation of data collection abstractions |
+| Namespace                     | Description |
+|:-----------------------------:|:------------|
+| [Collections](./Collections/) | Implementation of data collection abstractions |
 
 ---
 ## Structures

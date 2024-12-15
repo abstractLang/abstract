@@ -1,6 +1,12 @@
-# Collections
+---
+title: Collections
+---
 
-:::info[Under Construction]
+# Std.Types.Collections
+
+:::under-construction
+:::
+:::not-implemented
 :::
 
 ```abs

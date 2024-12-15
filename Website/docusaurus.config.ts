@@ -30,6 +30,12 @@ const config: Config = {
           showLastUpdateTime: true,
           editUrl: 'https://github.com/abstractLang/abstract/tree/main/Website',
           admonitions: {
+            keywords: [
+              'funcdoc',
+              'under-construction',
+              'not-implemented',
+              'funcdoc-params'
+            ],
             extendDefaults: true
           }
         },

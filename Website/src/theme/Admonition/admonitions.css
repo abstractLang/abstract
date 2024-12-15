@@ -1,0 +1,76 @@
+.funcdoc {
+    border-bottom: 1px dashed var(--contrast-color);
+    margin: 10px;
+    padding: 5px;
+}
+
+.funcdoc > div > .funcdoc-params {
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    background-color: var(--docusaurus-highlighted-code-line-bg);
+}
+
+.funcdoc-params > .identifier {
+    margin-right: 10px;
+    text-wrap: nowrap;
+    margin: 0;
+}
+
+.funcdoc-params > .identifier .type {
+    font-style: italic;
+    font-weight: lighter;
+}
+.funcdoc-params > .identifier .name {
+    font-weight: bold;
+}
+
+.funcdoc-params > .description {
+    width: 100%;
+    text-align: center;
+}
+.funcdoc-params > .description p {
+    margin: 0;
+}
+
+:not(.funcdoc) > div > .funcdoc-params {
+    background-color: red;
+}
+
+.not-implemented {
+    background: repeating-linear-gradient(
+        120deg,
+        var(--orange-warning-shade-1) 0%,
+        var(--orange-warning-shade-1) 30px,
+        var(--orange-warning-shade-0) 30px,
+        var(--orange-warning-shade-0) 90px,
+        var(--orange-warning-shade-1) 90px,
+        var(--orange-warning-shade-1) 120px
+    );
+}
+
+.under-construction {
+    background: repeating-linear-gradient(
+        120deg,
+        var(--blue-warning-shade-1) 0%,
+        var(--blue-warning-shade-1) 30px,
+        var(--blue-warning-shade-0) 30px,
+        var(--blue-warning-shade-0) 90px,
+        var(--blue-warning-shade-1) 90px,
+        var(--blue-warning-shade-1) 120px
+    );
+}
+
+.warning {
+    padding: 5px;
+    text-align: center;
+
+    margin-bottom: 15px;
+    border-radius: 15px;
+}
+.warning > h1 {
+    font-size: 1.3em;
+    margin: 0 !important;
+    text-shadow: 0px 0px 5px var(--main-color);
+}

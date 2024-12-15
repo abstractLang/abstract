@@ -1,6 +1,8 @@
 # Std
 
-:::info[Under Construction]
+:::under-construction
+:::
+:::not-implemented
 :::
 
 ```abs
@@ -11,11 +13,13 @@ namespace Std
 
 ---
 ## Namespaces
-| Namespace | Description |
-|:---------:|:------------|
-| Types     | Implementation of the primitives and basic types |
-| Console   | Functions related to the controll of the output console (stdout) |
-| Math      | Mathematical abstractions |
-| Memory    | Functions to handle and manage memory on lower levels |
-| Process   | Functions to controll process and theads |
-| Assembly  | Assembly interface |
+| Namespace                     | Description |
+|:-----------------------------:|:------------|
+| [Types](./Types/)             | Implementation of the primitives and basic types |
+| [Console](./Console/)         | Functions related to the controll of the console (std in/out) |
+| [Math](./Math/)               | Mathematical abstractions |
+| [Memory](./Memory/)           | Functions to handle and manage memory on lower levels |
+| [Process](./Process/)         | Functions to controll process and theads |
+| [System](./System/)           | Interfaces with the hosting system |
+| [Meta](./Meta/)               | Interfaces for metaprogramming |
+| [Compilation](./Compilation/) | Comunication with the compiler during compile time |
