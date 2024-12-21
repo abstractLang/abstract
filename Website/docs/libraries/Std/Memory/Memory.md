@@ -14,8 +14,8 @@ title: Memory
 namespace Std.Memory
 ```
 
-`Std.Memory` implements tools to manage memory, memory access
-and common memory access configuration.
+`Std.Memory` implements tools to manage memory, memory allocation,
+deallocation and common memory access configuration.
 
 ---
 

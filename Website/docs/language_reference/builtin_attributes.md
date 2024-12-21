@@ -18,23 +18,42 @@ uhhhhh i'm tired it's 01:41 AM
 some cool random attributes from my test code and Std lib:
 ```
 @public
+@internal
+@allowAcessTo(string)
+@allowAcessTo([]string)
+@denyAcessTo(string)
+@denyAcessTo([]string)
+
 @static
 @final
 
 @valueOnly
 @referenceOnly
+
+@comptime
+@runtime
+
 @abstract
+@interface
+@extensor
+
+@inline
+@noInline
+
+@callConv(//TODO//)
 
 @virtual
+@override
 
 @get(string)
 @set(string)
-@IndexerGet
-@IndexerSet
+@indexerGet
+@indexerSet
 
-@ImplicitConvert
-@overrideOperator(string)
+@implicitConvert
+@explicitConvert
+@overrideOperator(//TODO//)
 
-@defineGlobal(.. string)
-@extensor
+@defineGlobal(string)
+@defineGlobal([]string)
 ```

@@ -20,27 +20,28 @@ namespace Std.Types
 | Namespace                     | Description |
 |:-----------------------------:|:------------|
 | [Collections](./Collections/) | Implementation of data collection abstractions |
+| [Static](./Static/)           | Implementation of static size data types |
 
 ---
 ## Structures
-| Structure | Alias | Description |
-|:---------:|:-----:|:------------|
-| Type | type | A manipulable reference to a type |
-| AnyType | anytype | Data with undefined type |
-| Integer | | The base of all integer data types |
-| SignedInteger8 | i8 | Structure to manipulate 8-bit signed integers |
-| SignedInteger16 | i16 | Structure to manipulate 16-bit signed integers |
-| SignedInteger32 | i32 | Structure to manipulate 32-bit signed integers |
-| SignedInteger64 | i64 | Structure to manipulate 64-bit signed integers |
-| SignedInteger128 | i128 | Structure to manipulate 128-bit signed integers |
-| UnsignedInteger8 | u8 | Structure to manipulate 8-bit unsigned integers |
-| UnsignedInteger16 | u16 | Structure to manipulate 16-bit unsigned integers |
-| UnsignedInteger32 | u32 | Structure to manipulate 32-bit unsigned integers |
-| UnsignedInteger64 | u64 | Structure to manipulate 64-bit unsigned integers |
-| UnsignedInteger128 | u128 | Structure to manipulate 128-bit unsigned integers |
-| SingleFloating | f32 | Structure to manipulate single precision floating point numbers |
-| DoubleFloating | f64 | Structure to manipulate double precision floating point numbers |
-| Boolean | bool | Structure to manipulate boolean values |
-| String | string | Structure to manipulate text and strings |
-| Void | void | Structure that represents no type |
-| NoReturn | noreturn | Structure that represents no returnable process |
+| Structure  | Description |
+|:---------:|:------------|
+| Type | A manipulable reference to a type |
+| AnyType | Data with undefined type |
+| Integer | The base of all integer data types |
+| SignedInteger8 | Structure to manipulate 8-bit signed integers |
+| SignedInteger16 | Structure to manipulate 16-bit signed integers |
+| SignedInteger32 | Structure to manipulate 32-bit signed integers |
+| SignedInteger64 | Structure to manipulate 64-bit signed integers |
+| SignedInteger128 | Structure to manipulate 128-bit signed integers |
+| UnsignedInteger8 | Structure to manipulate 8-bit unsigned integers |
+| UnsignedInteger16 | Structure to manipulate 16-bit unsigned integers |
+| UnsignedInteger32 | Structure to manipulate 32-bit unsigned integers |
+| UnsignedInteger64 | Structure to manipulate 64-bit unsigned integers |
+| UnsignedInteger128 | Structure to manipulate 128-bit unsigned integers |
+| SingleFloating | Structure to manipulate single precision floating point numbers |
+| DoubleFloating | Structure to manipulate double precision floating point numbers |
+| Boolean | Structure to manipulate boolean values |
+| String | Structure to manipulate text and strings |
+| Void | Structure that represents no type |
+| NoReturn | Structure that represents no returnable process |
