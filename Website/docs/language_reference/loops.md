@@ -30,7 +30,7 @@ for i in 50 => Std.Console.log(i)
 for i in 50 by 10 => Std.Console.log(i)
 
 # Looping though each element of a array
-let byte[] numbers = [22, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
+let []byte numbers = [22, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43]
 for i in numbers => Std.Console.log(i + " is a prime number!")
 
 ```

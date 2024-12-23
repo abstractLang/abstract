@@ -34,10 +34,11 @@ myBio.myName = "Camila"
 myBio.myGithub = "lumi2021"
 ```
 
-the structure `Biography` on the example have 3 fields, an integer `myAge` and two strings `myName` and `myGithub`.
+The structure `Biography` on the example have 3 fields, an integer `myAge` and two strings `myName` and `myGithub`.
 The resulting size of this structure, in memory, will be, *in most cases*, the sum of all fields  plus a aditional
 constant pointer that indicates it type in a global type table. This implicit data is important to allow the program
 to know the type of the structure anywhere during runtime.
+
 ---
 ### Constructors
 
@@ -82,7 +83,7 @@ As it need some input data, the constructor will ask for some arguments:
 ```abs
 struct Biography {
     ...
-    constructor(string name, string gh, string age) {
+    constructor(string name, string gh, u8 age) {
         # This will run when the structure is instantiated!
     }
 }

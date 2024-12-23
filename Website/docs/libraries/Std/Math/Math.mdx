@@ -1,0 +1,209 @@
+---
+title: Math
+---
+
+import { Funcdoc, FuncdocParam, Fielddoc, FielddocStores } from '@site/src/components/docs/docs-utils';
+
+# Std.Math
+
+:::under-construction
+:::
+:::not-implemented
+:::
+
+```abs
+namespace Std.Math
+```
+
+`Std.Math` conteins a diversity of mathematical functions and structures
+
+---
+
+## Structures
+| Structure       | Description |
+|:---------------:|:------------|
+| [Vec2](./Vec2/) | A vector of 2 dimensions represented by `f32` |
+| [Vec3](./Vec3/) | A vector of 3 dimensions represented by `f32` |
+| Vec4            | A vector of 4 dimensions represented by `f32` |
+
+## Fields
+
+<Fielddoc bookmark="PI">
+    ```abs
+    @public const f64 PI
+    ```
+    <FielddocStores type="f64">The value of the PI constant.</FielddocStores>
+</Fielddoc>
+
+<Fielddoc bookmark="E">
+    ```abs
+    @public const f64 E
+    ```
+    <FielddocStores type="f64">The value of the Euler's number constant.</FielddocStores>
+</Fielddoc>
+
+---
+
+## Functions
+
+<Funcdoc bookmark="sin_T_rad">
+
+    ```abs
+    @public func T sin(type T, T rad)
+    ```
+
+    Returns the sine value for the provided angle in radians.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="rad">The angle value, in radians.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The sine value of `rad`.</FuncdocParam>
+
+</Funcdoc>
+
+<Funcdoc bookmark="cos_T_rad">
+    ```abs
+    @public func T cos(type T, T rad)
+    ```
+    Returns the cossine value for the provided angle in radians.
+
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="rad">The angle value, in radians.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The cossine value of `rad`.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="tan_T_rad">
+    ```abs
+    @public func T tan(type T, T rad)
+    ```
+    Returns the tangent value for the provided angle in radians.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="rad">The angle value, in radians.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The tangent value of `rad`.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="atan_T_val">
+    ```abs
+    @public func T atan(type T, T x)
+    ```
+    Returns the arc-tangent of `x`.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="x">The value.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The arc-tangent value of `x`.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="atan2_T_val">
+    ```abs
+    @public func T atan2(type T, T x, T y)
+    ```
+    Returns the arc-tangent of the `x/y` value.
+    Is more secure than [`atan`](#atan_t_val) as it provides
+    the zero check of `y`.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="x">The X value.</FuncdocParam>
+    <FuncdocParam type="T" name="y">The Y value.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The arc-tangent value of `x / y`.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="sqrt_T_val">
+    ```abs
+    @public func T sqrt(type T, T val)
+    ```
+    Returns the square root of the providade value.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="val">The value.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The square root of `val`.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="abs_T_val">
+    ```abs
+    @public func T abs(type T, T val)
+    ```
+    Returns the absolute value of a signed number, without the sign.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="val">The value.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The absolute value of `val`.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="cail_T_val">
+    ```abs
+    @public func T ceil(type T, T val)
+    ```
+    Returns the smallest integral value greater or equal than `val`.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="val">The value.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The ceil value of `val`.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="floor_T_val">
+    ```abs
+    @public func T floor(type T, T val)
+    ```
+    Returns the smallest integral value lesser or equal than `val`.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="val">The value.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The floor value of `val`.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="truncate_T_val">
+    ```abs
+    @public func T truncate(type T, T val)
+    ```
+    Returns the provided value rounded towards zero.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="val">The value to be truncated.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The truncated value.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="round_T_val">
+    ```abs
+    @public func T round(type T, T val)
+    ```
+    Returns the provided value rounded to the nearest integer.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="val">The value to be rounded.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The nearest integer.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="deg2rad_T_val">
+    ```abs
+    @public func T deg2rad(type T, T deg)
+    ```
+    Converts the provided degress angle to radians.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="val">The angle value, in degress.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The angle value, in radians.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="rad2deg_T_val">
+    ```abs
+    @public func T rad2deg(type T, T rad)
+    ```
+    Converts the provided radians angle to degress.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="val">The angle value, in radians.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">The angle value, in degress.</FuncdocParam>
+</Funcdoc>
+
+<Funcdoc bookmark="log_T_val">
+    ```abs
+    @public func T log(type T, T val, T base)
+    ```
+    Returns the logarithm of the provided value in the providade base.
+
+    <FuncdocParam type="type" name="T">Generic type for the provided and returned value.</FuncdocParam>
+    <FuncdocParam type="T" name="val">The value.</FuncdocParam>
+    <FuncdocParam type="T" name="base">The base.</FuncdocParam>
+    <FuncdocParam type="T" name="!ret">he logarithm of `val` in base `base`.</FuncdocParam>
+</Funcdoc>

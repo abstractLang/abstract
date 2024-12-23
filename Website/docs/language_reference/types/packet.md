@@ -51,13 +51,15 @@ let MyDinner dinner = MyDinner {
 
 and you can use the dot operator (`.`) to acess it fields:
 ```abs
-    if !dinner.hasFork Std.Console.log("Comrade doesn't have a fork!");
-    if !dinner.hasSpoon Std.Console.log("Comrade doesn't have a spoon!");
-    if !dinner.hasKnife Std.Console.log("Comrade doesn't have a knife!");
-    if !dinner.hasPlate Std.Console.log("Comrade doesn't have a plate!");
+    import { Console } from Std
 
-    if !dinner.hungerLevel > 10 Std.Console.log("Starving!");
-    elif !dinner.hungerLevel > 5 Std.Console.log("Hungry!");
+    if !dinner.hasFork writeLn("Comrade doesn't have a fork!");
+    if !dinner.hasSpoon writeLn("Comrade doesn't have a spoon!");
+    if !dinner.hasKnife writeLn("Comrade doesn't have a knife!");
+    if !dinner.hasPlate writeLn("Comrade doesn't have a plate!");
+
+    if !dinner.hungerLevel > 10 writeLn("Starving!");
+    elif !dinner.hungerLevel > 5 writeLn("Hungry!");
 ```
 
 ```text title="Console Output"
@@ -77,14 +79,16 @@ packet(8) Character {
     u4 exp
 }
 
-@static func Character NewChar() {
+# This function is static as it's on a namespace scope!
+func Character NewChar() {
     return Character {
         level: 0,
         exp: 0
     }
 }
 
-@static func void addExp(*FixedPoint _self, u8 e) {
+# This function is static as it's on a namespace scope!
+func void addExp(*FixedPoint _self, u8 e) {
     _self.exp += e
     if (Std.Assembly.flagsRegister.Overflow) level++
 }
@@ -98,12 +102,12 @@ addExp(&sam, 5)
 
 Or using the extensor attribute to extends the packet's symbol with static functions:
 ```abs
-@static @extensor func void addExp(*FixedPoint _self, u8 e) {
+@extensor func void addExp(*FixedPoint _self, u8 e) {
     _self.exp += e
-    if (Std.Assembly.flagsRegister.Overflow) level++
+    if (Std.System.Assembly.flagsRegister.Overflow) level++
 }
 
-...
+# ...
 jake.addExp(10)
 sam.addExp(5)
 ```
@@ -115,17 +119,16 @@ packet(8) Character {
     u4 exp
 }
 # to make the link between the packet and the structure,
-# the structure should be marked with @static and @extensor.
-@static @extensor struct Character {
+# the structure should be marked with @extensor.
+@extensor struct Character {
 
-    @static @extensor func Character NewChar() {
-        return Character {
-        level: 0,
-        exp: 0
+    constructor() {
+        level = 0
+        exp = 0
     } 
 
-    @static @extensor func void addExp(*FixedPoint _self, u8 e) {
-        _self.exp += e
+    func void addExp(u8 e) {
+        exp += e
         if (Std.Assembly.flagsRegister.Overflow) level++
     }
 

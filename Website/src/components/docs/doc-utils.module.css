@@ -1,0 +1,38 @@
+.funcdoc {
+    border-bottom: 1px dashed var(--contrast-color);
+    margin: 10px;
+    padding: 5px;
+}
+.fielddoc {
+    border-bottom: 1px dashed var(--contrast-color);
+    margin: 10px;
+    padding: 5px;
+}
+
+.funcdocParams,
+.fielddocStores {
+    display: flex;
+    justify-content: space-between;
+    border-left: 1px solid var(--contrast-color-transparent);
+    padding-left: 9px;
+    padding-right: 10px;
+}
+.identifier > .type {
+    font-weight: lighter;
+}
+.identifier > .name {
+    font-weight: bold;
+}
+
+.funcdocParams p,
+.funcdocParams h1,
+.funcdocParams h2, 
+.funcdocParams h3,
+.funcdocParams span,
+.fielddocStores p,
+.fielddocStores h1,
+.fielddocStores h2, 
+.fielddocStores h3,
+.fielddocStores span {
+    margin: 0;
+}

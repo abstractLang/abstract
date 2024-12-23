@@ -11,6 +11,7 @@
 
   --main-color: white;
   --contrast-color: black;
+  --contrast-color-transparent: rgba(0, 0, 0, 0.4);
 
   --blue-warning-shade-0: hsl(199, 100%, 80%);
   --blue-warning-shade-1: hsl(199, 100%, 60%);
@@ -32,6 +33,7 @@
 
   --main-color: black;
   --contrast-color: white;
+  --contrast-color-transparent: rgba(255, 255, 255, 0.4);
 
   --blue-warning-shade-0: hsl(199, 100%, 40%);
   --blue-warning-shade-1: hsl(199, 100%, 25%);

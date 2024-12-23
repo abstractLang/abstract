@@ -56,4 +56,5 @@ some cool random attributes from my test code and Std lib:
 
 @defineGlobal(string)
 @defineGlobal([]string)
+@defineAttribute(string)
 ```

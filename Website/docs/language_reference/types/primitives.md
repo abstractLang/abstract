@@ -26,8 +26,8 @@ states without messing the values.
 ```abs
 let bool cake = false
 
-if cake => Std.Console.log("Yammy!")
-else => Std.Console.log("The cake is a lie!")
+if cake Std.Console.writeLn("Yammy!")
+else Std.Console.writeLn("The cake is a lie!")
 ```
 ```text title="Console Output"
 The cake is a lie!
@@ -68,7 +68,7 @@ Chars are data structures made to hold a single text character. It can be achive
 by manually setting with a character value or getting a character from a index of
 a string. \
 As every string in Abstract is UTF-8, every character have the same length as a `i32`
-in memory, being able to hold every possible character of the UTF-8 char set.
+in memory, being able to hold every possible character of the Unicode char set.
 
 |abstract | alias | Equivalent in C | Size in bits |
 |---------|:-----:|:---------------:|:------------:|
