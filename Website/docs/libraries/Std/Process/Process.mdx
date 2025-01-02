@@ -1,0 +1,31 @@
+---
+title: Process
+---
+import { Funcdoc, FuncdocParam } from '@site/src/components/docs/docs-utils';
+
+# Std.Process
+
+:::under-construction
+:::
+:::not-implemented
+:::
+
+```abs
+namespace Std.Process
+```
+
+`Std.Process` abstracts the management of the current process,
+parallel tasks and threads.
+
+---
+
+## Functions
+
+<Funcdoc bookmark="exit_isize">
+    ```abs
+    @public func noreturn exit(isize error)
+    ```
+    Aborts the current process execution.
+
+    <FuncdocParam type="isize" name="error">The error status code.</FuncdocParam>
+</Funcdoc>

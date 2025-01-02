@@ -41,3 +41,15 @@
   --orange-warning-shade-0: hsl(20, 100%, 40%);
   --orange-warning-shade-1: hsl(20, 100%, 25%);
 }
+
+/* custom token styles */
+.token.type {
+  font-style: italic;
+}
+.token.attibute {
+  font-style: italic;
+}
+
+.token.string.interpolation.plain {
+  color: white;
+}

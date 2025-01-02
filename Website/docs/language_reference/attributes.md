@@ -2,7 +2,7 @@
 sidebar_position: 8
 ---
 
-# Built-in Attributes
+# Attributes
 
 :::info[Under Construction]
 :::
@@ -10,10 +10,14 @@ sidebar_position: 8
 :::
 
 Attributes are the things with the `@` prefix
-They do uhhh things with the uhhhh member that follows their declaration (during uhhhh compiling mainly)
+They do uhhh things with the uhhhh member that follows their declaration (during uhhhh compiling)
 They can accept parameters too
 
 uhhhhh i'm tired it's 01:41 AM
+
+---
+
+## Built-in Attributes
 
 some cool random attributes from my test code and Std lib:
 ```
@@ -35,6 +39,7 @@ some cool random attributes from my test code and Std lib:
 
 @abstract
 @interface
+@externInterface
 @extensor
 
 @inline

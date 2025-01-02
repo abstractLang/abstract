@@ -19,15 +19,15 @@ Booleans are types that can only represent the binary values `true` or `false`.
 These two values are extremely important to handle conditionals or hold simple
 states without messing the values.
 
-|abstract | alias | Equivalent in C | Size in bits |
-|---------|:-----:|:---------------:|:------------:|
-| bool    | n/a   | bool            | 8            |
+| Alias | Size            | Implementation         |
+|-------|:---------------:|:----------------------:|
+| bool  | 8 bits / 1 byte | [Std.Types.Boolean](#) |
 
 ```abs
 let bool cake = false
 
-if cake Std.Console.writeLn("Yammy!")
-else Std.Console.writeLn("The cake is a lie!")
+if (cake) Std.Console.writeln("Yammy!")
+else Std.Console.writeln("The cake is a lie!")
 ```
 ```text title="Console Output"
 The cake is a lie!
@@ -43,9 +43,9 @@ used to store and reproduce text characters easily. \
 In Abstract, every string is coded in UTF-8, with characters variating from 1-4
 bytes length.
 
-|abstract | alias | Equivalent in C | Size in bits |
-|---------|:-----:|:---------------:|:------------:|
-| string  | n/a   | n/a             | variable     |
+| Alias  | Size                              | Implementation         |
+|--------|:---------------------------------:|:----------------------:|
+| string | variable (heap allocated content) | [Std.Types.String](#)  |
 
 ```abs
 let string mySpeek = "Hello, World!"
@@ -70,9 +70,9 @@ a string. \
 As every string in Abstract is UTF-8, every character have the same length as a `i32`
 in memory, being able to hold every possible character of the Unicode char set.
 
-|abstract | alias | Equivalent in C | Size in bits |
-|---------|:-----:|:---------------:|:------------:|
-| char    | n/a   | n/a             | 32           |
+| Alias  | Size              | Implementation            |
+|--------|:-----------------:|:-------------------------:|
+| char   | 32 bits / 4 bytes | [Std.Types.Character](#)  |
 
 ```abs
 const string myString = "Hello, World!"
@@ -81,8 +81,3 @@ let char myChar = 'U'
 myChar = myString[7] # 'W'
 
 ```
-
----
-## Enums
-:::warning[Not Implemented!]
-:::

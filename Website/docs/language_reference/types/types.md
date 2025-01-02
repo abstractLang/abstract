@@ -58,10 +58,10 @@ import { Console } from Std
 
 # Overloads of the function 'foo'
 @public func void foo(i8 value) {
-    writeLn("The value is a byte and it is " + value + "!")
+    writeln("The value is a byte and it is \{value}!")
 }
 @public func void foo(i32 value) {
-    writeLn("The value is a int32 and it is " + value + "!")
+    writeln("The value is a int32 and it is \{value}!")
 }
 
 ```
