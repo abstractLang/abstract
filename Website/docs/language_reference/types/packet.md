@@ -127,15 +127,15 @@ packet(8) Character {
         exp = 0
     } 
 
-    func void addExp(u8 e) {
+    @public func void addExp(u8 e) {
         exp += e
         if (Std.Assembly.flagsRegister.Overflow) level++
     }
 
 }
 
-let Character jake = Character.NewChar()
-let Character sam = Character.NewChar()
+let Character jake = new Character()
+let Character sam = new Character()
 
 jake.addExp(10)
 sam.addExp(5)
@@ -225,13 +225,23 @@ TODO
 ### Offset
 
 In some cases, where some structures can use reserved or ignored bits,
-it's possible to use Offsets to jump these.
+it's possible to use offsets to jump these.
 
 ```abs
 packet MyPack {
     bool firstBit,
     offset(6),     # Jumps 6 bits
-    bool lastBit,
+    bool lastBit
 }
 ```
 
+Offsets can also be used to create unions and overlap other memory
+addresses:
+
+```abs
+packet MyUnion {
+    u64 myUnsigned,
+    offset(-64),  # Back 64 bits
+    i64 mySigned
+}
+```
