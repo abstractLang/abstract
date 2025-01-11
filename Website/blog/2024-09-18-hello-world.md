@@ -12,7 +12,7 @@ to it.
 
 <!-- truncate -->
 
-(sry bad anglish and bad writing, i'm not good with texts and english is not my first lang :3)
+(sry bad english and bad writing, i'm not good with texts and english is not my first lang :3)
 
 There's a lot of times that i tried to do my own language interpreters and compilers, but nothing so good.
 In my early days as a little dumb programmer girl, i don't even knew what a lexer is! So in this point, i

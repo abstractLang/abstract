@@ -20,7 +20,7 @@ uhhhhh i'm tired it's 01:41 AM
 ## Built-in Attributes
 
 some cool random attributes from my test code and Std lib:
-```
+```abs
 @public
 @internal
 @allowAcessTo(string)

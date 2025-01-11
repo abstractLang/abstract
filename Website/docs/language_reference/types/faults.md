@@ -64,7 +64,7 @@ let u32 foo = tryToReturnSomething()!?           # nullable unwrapping
 
 # You can do as well
 tryToDoSomething().ignored()
-let u32? bar = tryToReturnSomething().ignored()  # not unwrapped
+let ?u32 bar = tryToReturnSomething().ignored()  # not unwrapped
 ```
 
 ---
