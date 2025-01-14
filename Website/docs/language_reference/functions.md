@@ -13,10 +13,13 @@ The basic concept of a function is a block of code that can maybe accept argumen
 return data.
 This block can easily be called by other functions in any moment or order.
 
+---
+## Declaring and Invoking
+
 A example of function declaration and call in abstract is
 ```abs
 func void foo() {
-    Std.Console.log("foo called!")
+    Std.Console.writeln("foo called!")
 }
 
 foo()
@@ -25,15 +28,40 @@ foo()
 foo called!
 ```
 
-A function can be called by it reference followed by a opening and closing parenthesis `()` as follows:
+the syntax for declarate a function is:
+```abs
+func <type> <name>(...) { ... }
+```
+
+where `<type>` is the type that the function returns and `<name>` is the identifier for
+reffer to the function.
+
+A function can be invoked by it reference followed by a opening and closing parenthesis `()` as follows:
 ```abs
 FunctionReference()
 ```
 
-It the function ask for arguments, the values should be declarated, in order, inside the parenthesis
+---
+## Parameters and arguments
+
+
+Some functions can ask for arguments to return some operated value or behave diferently depending
+on how it is needed.
+
+During the function declaration, parameters can be included as *typed identifiers* to identify their
+type and allow them to be refered inside the function block.
+
 ```abs
-@public @static()
-func void foo(i32 a, i8 b, i128 c) { ... }
+# the function `foo` will ask for 2 arguments to be invoked.
+# - The first can be a value of any type that will be refered as `any`.
+# - The seccond is a 32 bit integer that will be refered as `number`.
+func void foo(anytype any, i32 number) { ... }
+```
+
+
+If the function ask for arguments, the values should be declarated, in order, inside the parenthesis
+```abs
+@public func void foo(i32 a, i8 b, i128 c) { ... }
 
 const i32 myInt = 100
 const myByte = 255
@@ -44,11 +72,15 @@ foo(myInt, myByte, myLonger)
 
 # /!\ Compilation error!
 # There's no function 'foo' with this parameter type order!
+###
 foo(myByte, myInt, myLonger)
+###
 
 # /!\ Compilation error!
 # There's no function 'foo' that accepts only a byte!
+###
 foo(myByte)
+###
 ```
 
 ---

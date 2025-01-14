@@ -18,7 +18,7 @@ lines or blocks of code.
 To declare the right section of a line as a comment, use the `#` character
 to start a single-line comment.
 ```abs
-iAm.executeable() # I am a comment!
+IAm.executeable() # I am a comment!
 ```
 
 ---
@@ -27,7 +27,7 @@ iAm.executeable() # I am a comment!
 To declare one section in the middle of a line or more than one line as comment,
 use `###` to open and close the range.
 ```abs
-iAm.executeable()
+IAm.executeable()
 ###
     I am a comment!
     Me too!

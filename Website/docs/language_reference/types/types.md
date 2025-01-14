@@ -23,7 +23,7 @@ define complex structures, non-numerical based data, lists and references and et
 
 As an example of the use of types:
 ```abs
-import { Console } from Std
+import from Std.Console
 
 # The function main will ask for a list of strings
 # to be called. It also declarate a return type
