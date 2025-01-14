@@ -5,7 +5,7 @@ sidebar_position: 5
 # Packet
 :::info[Under Construction]
 :::
-:::warning[Not Implemented!]
+:::danger[To be Reworked On!]
 :::
 
 While a `struct` may reorganize it layout on memory in unexpected ways, packets are made to be a exact

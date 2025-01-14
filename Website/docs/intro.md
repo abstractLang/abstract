@@ -20,7 +20,7 @@ Abstract uses as it foundation five concepts:
 ### Controll
 
 Abstract is made to be a high-level language that allows the user to acess the
-lower softwer levels possible by the targeting platform. it is made by features like:
+lower levels possible by the targeting platform. it is made by features like:
 
 - Inline assembly;
 - Explicit compatibility with other languages and libraries;
