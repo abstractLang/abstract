@@ -8,34 +8,32 @@ title: Your First Program
 :::
 
 
-This document will help you how to settup the Abstract tools in your
+This document will help you how to set up Abstract's tools in your
 machine as well as how to create, organize and execute your first
 program.
 
 ---
-## Setupping the environment
+## Setting up the environment
 
 TODO
 
-To start a new project, beggin creating a new directory folder to
+To start a new project, begin creating a new directory folder to
 organize the project into the same place. For this example, let's
 call the folder `MyProgram`;
 
 ---
 ## Writing the program
 
-inside the `MyProgram` folder, create a script file with the
-`.a` extension `main.a`.
+Inside the `MyProgram` folder, create a script file with the
+`.a` extension e.g., `main.a`.
 
-inside the script file, write the following code:
+Inside the script file, write the following code:
 ```abs title="main.a"
 import from Std.Console
 
 function !void main() {
-
     writeln("Hello, World!")
-    writeln("I'm codding on abstract!")
-
+    writeln("I'm coding in abstract!")
 }
 
 ```
@@ -60,9 +58,9 @@ abs run main.a -o bin/
 ### Building with a build script
 
 To use a build script, create a new script with the `.a`
-extension `build.a`.
+extension like `build.a`.
 
-To use a build script, we reccomend you to follow this
+To use a build script, we recommend you to follow this
 directory organization:
 
 ```text title="MyProgram/"
