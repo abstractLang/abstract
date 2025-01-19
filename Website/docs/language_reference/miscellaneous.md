@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 
 
-# Miscelaneous
+# Miscellaneous
 
 ## Comments
 
@@ -15,17 +15,17 @@ lines or blocks of code.
 ---
 ### Single line comments
 
-To declare the right section of a line as a comment, use the `#` character
-to start a single-line comment.
+The `#` character can be used to declare the section of a line on its right
+as a comment.
 ```abs
 IAm.executeable() # I am a comment!
 ```
 
 ---
-### Multi line comments
+### Multi-line comments
 
-To declare one section in the middle of a line or more than one line as comment,
-use `###` to open and close the range.
+Enclose a section or chunk of lines with `###` to declare it as a multi-lined
+comment.
 ```abs
 IAm.executeable()
 ###
