@@ -6,10 +6,10 @@ sidebar_position: 1
 :::info[Under Construction]
 :::
 
-Numbers are the base of math and needed in every logical process. \
-The abstract language allows the user to choose betwen a long list
+Numbers are the base of math and they are needed in every logical process. \
+The Abstract language allows the user to choose between a long list
 of numeric types for the best result, performance and memory management
-of their application.
+for their application.
 
 ---
 ## Integer Numbers
@@ -17,24 +17,25 @@ of their application.
 :::
 
 The most simple way of representing numbers is with integers. Integers
-represents a aways complete value, never allowing any decimal point.
+represents an always complete (non-fractional) value, never allowing
+any decimal point.
 
-For historical, computional and memory optimal reasons, the computer gives
-a extensive range of possibilities about numeric integer values.
+For historical, computational and memory optimal reasons, the computer gives
+an extensive range of possibilities about numeric integer values.
 
-To delcarate a integer type in the Abstract Language, it is used a letter
-to declarate the kind of the integer (signed or unsigned) and a number to
-declarate the size, in bits, that this data will coast in memory.
+To declare an integer type in the Abstract Language, use the letter i or u
+to declare the kind of the integer (signed or unsigned) and a number to
+declare the size, in bits, that this data will occupy in memory.
 
-examples of valid integer types are:
+Examples of valid integer types are:
 ```abs
 i8   # signed 8-bit (1 byte) integer
 u16  # unsigned 16-bit integer
 i128 # signed 128-bit integer
 ```
 
-The following table shows every integer type and it corresponding in the C
-programming language:
+The following table shows every integer type and its corresponding type
+in the C programming language:
 
 | Alias     | Equivalent in C | Size                | Range                           | Implementation           |
 |-----------|:---------------:|:-------------------:|:-------------------------------:|:------------------------:|
@@ -55,17 +56,17 @@ The `iptr` and `uptr` types are special general-purpose integers that are define
 by the target. It is equivalent to the size of a memory pointer on the specific
 platform or the biggest native integer that the specified target can process.
 E.g.:
-If compiling the project to a x86 archtecture based machine, `iptr` will be equivalent
-to i32 and
+If compiling the project to an x86 architecture based machine, `iptr` will be equivalent
+to i32 and on an amd64 architecture, it will be equivalent to i64.
 
 ---
 ## Floating Numbers
 :::warning[Not Implemented!]
 :::
 
-Floating numbers are more complex numeric values used to reproduce fractions.
+Floating numbers are somewhat complicated numerical values used to reproduce fractions.
 
-As the table above, the abstract floating types are above listed, with their
+As the table above, the Abstract floating types are listed below, with their
 corresponding type in the C programming language:
 
 | Alias        | Equivalent in C | Implementation                |
