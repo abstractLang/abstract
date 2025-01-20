@@ -67,12 +67,12 @@ import from Std.Console
     writeln("The value is a byte and it is \{value}!")
 }
 @public func void foo(i32 value) {
-    writeln("The value is a int32 and it is \{value}!")
+    writeln("The value is an int32 and it is \{value}!")
 }
 
 ```
 ```text title="Console Output"
 The value is a byte and it is 8!
-The value is a int32 and it is 32!
-The value is a int32 and it is 16!
+The value is an int32 and it is 32!
+The value is an int32 and it is 16!
 ```
