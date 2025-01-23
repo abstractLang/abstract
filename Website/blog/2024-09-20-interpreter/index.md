@@ -95,7 +95,7 @@ depending of the test's result, and display a goodbie message.
 
 As the result, i'm getting it at the moment:
 
-![result](images/2024-09-20-interpreter-1.png)
+![result](1.png)
 
 Nothing so much increadble, but i'm really happy that it's finally showing some result.
 Obviously it's noticeable how the condition tests are not being tested, as it is something that i will
