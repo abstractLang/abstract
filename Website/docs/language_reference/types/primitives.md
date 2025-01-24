@@ -6,8 +6,8 @@ sidebar_position: 2
 :::info[Under Construction]
 :::
 
-Abstract also have some other primitive types that can't be considerated numbers.
-Some of then exists to create some abstractions with complex collections of
+Abstract also has some other primitive types that aren't just numbers.
+Some of them exists to create some abstractions with complex collections of
 numerical values or create type encapsulation.
 
 ---
@@ -26,7 +26,7 @@ states without messing the values.
 ```abs
 let bool cake = false
 
-if (cake) Std.Console.writeln("Yammy!")
+if (cake) Std.Console.writeln("Yummy!")
 else Std.Console.writeln("The cake is a lie!")
 ```
 ```text title="Console Output"
@@ -38,10 +38,10 @@ The cake is a lie!
 :::warning[Not Implemented!]
 :::
 
-Strings are a data structure that is able to store text data. A string can be
+A string is a data structure that is able to store text data. A string can be
 used to store and reproduce text characters easily. \
-In Abstract, every string is coded in UTF-8, with characters variating from 1-4
-bytes length.
+In Abstract, every string is encoded in UTF-8, with characters varying from 1-4
+bytes in length.
 
 | Alias  | Size                              | Implementation         |
 |--------|:---------------------------------:|:----------------------:|
@@ -64,9 +64,9 @@ Goodbie, World!
 :::warning[Not Implemented!]
 :::
 
-Chars are data structures made to hold a single text character. It can be achived
-by manually setting with a character value or getting a character from a index of
-a string. \
+Chars are data structures made to hold a single text character. Chars value can
+either be set or assigned manually with a character value or it can be set by
+getting a character from an index of a string. \
 As every string in Abstract is UTF-8, every character have the same length as a `i32`
 in memory, being able to hold every possible character of the Unicode char set.
 
