@@ -8,8 +8,8 @@ public class Structure(StructureDeclarationNode node, ProgramMember? parent, Mem
 {
     public readonly StructureDeclarationNode structureNode = node;
 
-    public bool IsGeneric => _generics.Count > 0;
-    protected Dictionary<MemberIdentifier, TypeReference> _generics = [];
+    public bool IsGeneric => generics.Count > 0;
+    public Dictionary<MemberIdentifier, TypeReference> generics = [];
 
     protected Dictionary<string, FunctionGroup> _overloadedOperators = [];
     protected Dictionary<Structure, Function> _implicitConversions = [];
@@ -18,9 +18,12 @@ public class Structure(StructureDeclarationNode node, ProgramMember? parent, Mem
 
     public Structure extends = null!;
 
+    public int bitsize = 0;
+    public int aligin = -1; // -1 means not specified
+
     public void AppendGeneric(MemberIdentifier identifier, int idx)
     {
-        _generics.Add(identifier, new GenericTypeReference(this, idx));
+        generics.Add(identifier, new GenericTypeReference(this, idx));
     }
     public void AppendOperator(string op, Function overload)
     {
@@ -37,7 +40,7 @@ public class Structure(StructureDeclarationNode node, ProgramMember? parent, Mem
 
     public override TypeReference? SearchForGeneric(MemberIdentifier identifier)
     {
-        if (_generics.TryGetValue(identifier, out var r)) return r;
+        if (generics.TryGetValue(identifier, out var r)) return r;
         return base.SearchForGeneric(identifier);
     }
     public FunctionGroup? SearchForOperators(string op)
