@@ -1,0 +1,256 @@
+00 Nop
+01 Illegal
+02 LdConst      nullptr
+03 LdConst      i1          <immi8>
+04 LdConst      i8          <immi8>
+05 LdConst      i16         <immi16>
+06 LdConst      i32         <immi32>
+07 LdConst      i64         <immi64>
+08 LdConst      i128        <immi128>
+09 LdConst      iptr        <immiptr>
+0A LdConst      i<immu8>    <immi$(arg0)>
+0B LdConst      struct      <immref>        <immbuffer>
+0C LdField      <immref>
+0D LdLocal      <immu8>
+0E LdLocal      <immu16>
+0F LdType       <immref>
+10 SetField     <immref>
+11 SetLocal     <immu8>
+12 SetLocal     <immu16>
+13 GetType
+14 New
+15 Destroy
+16 Pop
+17 Dup
+18 Call         void        <immref>
+19 Call         i1          <immref>
+1A Call         i8          <immref>
+1B Call         i16         <immref>
+1C Call         i32         <immref>
+1D Call         i64         <immref>
+1E Call         i128        <immref>
+1F Call         iptr        <immref>
+20 Call         i<immu8>    <immref>
+21 Call         struct      <immref>
+22 Conv         <immu8>     <immu8>
+23 Add
+24 Sub
+25 Mul
+26 Mul.u
+27 Div
+28 Div.u
+29 Rem
+2A Rem.u
+2B Abs
+2C Or
+2D And
+2E Not
+2F Xor
+30 Nand
+31 Shiftl
+32 Shiftl.u
+33 Shiftr
+34 Shiftr.u
+35 Cmp     <immu8>
+36 Jmp     <immu8> <immu32>
+37 If      <immu8> <immu32>
+38 Else
+39 EndIf
+3A EnterFrame   <immu16>
+3B LeaveFrame
+3C Throw                        ; FIXME after here is done later
+3D LdConst      str         <immdptr>
+3E 
+3F 
+40 
+41 
+42 
+43 
+44 
+45 
+46 
+47 
+48 
+49 
+4A 
+4B 
+4C 
+4D 
+4E 
+4F 
+50 
+51 
+52 
+53 
+54 
+55 
+56 
+57 
+58 
+59 
+5A 
+5B 
+5C 
+5D 
+5E 
+5F 
+60 
+61 
+62 
+63 
+64 
+65 
+66 
+67 
+68 
+69 
+6A 
+6B 
+6C 
+6D 
+6E 
+6F 
+70 
+71 
+72 
+73 
+74 
+75 
+76 
+77 
+78 
+79 
+7A 
+7B 
+7C 
+7D 
+7E 
+7F 
+80 
+81 
+82 
+83 
+84 
+85 
+86 
+87 
+88 
+89 
+8A 
+8B 
+8C 
+8D 
+8E 
+8F 
+90 
+91 
+92 
+93 
+94 
+95 
+96 
+97 
+98 
+99 
+9A 
+9B 
+9C 
+9D 
+9E 
+9F 
+A0 
+A1 
+A2 
+A3 
+A4 
+A5 
+A6 
+A7 
+A8 
+A9 
+AA 
+AB 
+AC 
+AD 
+AE 
+AF 
+B0 
+B1 
+B2 
+B3 
+B4 
+B5 
+B6 
+B7 
+B8 
+B9 
+BA 
+BB 
+BC 
+BD 
+BE 
+BF 
+C0 
+C1 
+C2 
+C3 
+C4 
+C5 
+C6 
+C7 
+C8 
+C9 
+CA 
+CB 
+CC 
+CD 
+CE 
+CF 
+D0 
+D1 
+D2 
+D3 
+D4 
+D5 
+D6 
+D7 
+D8 
+D9 
+DA 
+DB 
+DC 
+DD 
+DE 
+DF 
+E0 
+E1 
+E2 
+E3 
+E4 
+E5 
+E6 
+E7 
+E8 
+E9 
+EA 
+EB 
+EC 
+ED 
+EE 
+EF 
+F0 
+F1 
+F2 
+F3 
+F4 
+F5 
+F6 
+F7 
+F8 
+F9 
+FA 
+FB 
+FC 
+FD 
+FE 
+FF 

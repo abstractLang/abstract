@@ -2,6 +2,7 @@ using Abstract.Parser.Core.Language.SyntaxNodes.Expression;
 using Abstract.Parser.Core.Language.SyntaxNodes.Expression.TypeModifiers;
 using Abstract.Parser.Core.Language.SyntaxNodes.Value;
 using Abstract.Parser.Core.ProgData;
+using Abstract.Parser.Core.ProgData.DataReference;
 using Abstract.Parser.Core.ProgMembers;
 
 namespace Abstract.Parser;
@@ -12,6 +13,13 @@ public partial class Evaluator
     *   Type matching in abstract code is really complex! :p
     *   I will try to document it somehow and link the docs here
     *   Questions can be made directly to me anyway
+    *   - lumi
+    */
+
+    /*
+    *   Yah type matching is so complex that i fucked around with
+    *   everything around here, good luck to understand anything
+    *   because i can't too
     *   - lumi
     */
 
@@ -37,9 +45,10 @@ public partial class Evaluator
                 paramTypes.Add(reference);
 
                 if (reference is SolvedTypeReference @solved
-                && solved.structure.GlobalReference == "Std.Types.Type")
+                // Check if it's generic
+                && (solved.structure.GlobalReference == "Std.Types.Type"
+                || solved.structure.GlobalReference == "Std.Types.AnyType"))
                 {
-                    // is of type "type" (bruh)
                     i.AppendGeneric(parameter.Identifier.ToString(), j);
                 }
             }
@@ -66,20 +75,21 @@ public partial class Evaluator
                 for (var j = 0; j < funcNode.ParameterCollection.Items.Length; j++)
                 {
                     var parameter = funcNode.ParameterCollection.Items[j];
-
                     var reference = GetTypeFromTypeExpressionNode(parameter.Type, function);
                     parameters.Add((reference, parameter.Identifier.ToString()));
 
-                    if (reference is SolvedTypeReference @solved
-                    && solved.structure.GlobalReference == "Std.Types.Type")
+                    if (reference is SolvedTypeReference @solved &&
+                    // Check if it's generic
+                    (solved.structure.GlobalReference == "Std.Types.Type"
+                    || solved.structure.GlobalReference == "Std.Types.AnyType"))
                     {
-                        // is of type "type" (bruh)
                         function.AppendGeneric(parameter.Identifier.ToString(), j);
                     }
+
                 }
                 
-                function.parameters = [.. parameters];
-                function.returnType = GetTypeFromTypeExpressionNode(funcNode.ReturnType, function);
+                function.baseParameters = [.. parameters];
+                function.baseReturnType = GetTypeFromTypeExpressionNode(funcNode.ReturnType, function);
                 
             }
         }
@@ -105,7 +115,11 @@ public partial class Evaluator
         if (type.Children[0] is IdentifierCollectionNode @identifier)
         {
             var struc = SearchStructure(identifier.ToString(), parent);
-            if (struc != null) return new SolvedTypeReference(struc);
+            if (struc != null)
+            {
+                var isAnytype = struc.GlobalReference == "Std.Types.AnyType";
+                return new SolvedTypeReference(struc, [], isAnytype);
+            }
             
             if (parent is Function @func)
             {
@@ -124,8 +138,19 @@ public partial class Evaluator
         {
             var child = GetTypeFromTypeExpressionNode(array.Type, parent);
             var arrayStruct = SearchStructure("Std.Types.Collections.Array");
+            var childGeneric = (child as SolvedTypeReference)?.isGeneric ?? false;
 
-            return new SolvedTypeReference(arrayStruct, child);
+            return new SolvedTypeReference(arrayStruct, [child], childGeneric);
+        }
+
+        // failable modifier
+        else if (type.Children[0] is FailableTypeModifierNode @failable)
+        {
+            var child = GetTypeFromTypeExpressionNode(failable.Type, parent);
+            var failableStruct = SearchStructure("Std.Types.Failable");
+            var childGeneric = (child as SolvedTypeReference)?.isGeneric ?? false;
+
+            return new SolvedTypeReference(failableStruct, [child], childGeneric);
         }
 
         var diagnostics = (new System.Diagnostics.StackFrame(0, true));
@@ -167,22 +192,51 @@ public partial class Evaluator
         return member!;
     }
 
-    public (Function? f, Function?[] c) TryGetOveloadIndirect(FunctionGroup funcGroup, TypeReference[] types)
+    // FIXME these 3 next needs a fucking hard rework
+    /// <summary>
+    /// Returns a valid function overload for the designed argument
+    /// types, alowing type cast
+    /// </summary>
+    /// <param name="funcGroup">The function group</param>
+    /// <param name="types">The argument types</param>
+    /// <returns></returns>
+    public (Function? f, Function?[] c) TryGetOveloadIndirect(FunctionGroup funcGroup, DataRef[] args)
     {
         Function? func = null!;
         Function?[] tconvert = null!;
         
         foreach (var f in funcGroup)
         {
-            var parameters = f.parameters;
+            var parameters = f.baseParameters;
 
-            if (types.Length != parameters.Length) continue;
+            Dictionary<int, TypeReference> _generics = [];
+
+            if (args.Length != parameters.Length) continue;
 
             List<Function?> toConvert = [];
             for (var i = 0; i < parameters.Length; i++)
             {
-                if (!CanBeAssignedTo(types[i], parameters[i].type, out var cf)) goto Break;
-                toConvert.Add(cf);
+                if (parameters[i].type is GenericTypeReference @generic)
+                {
+                    if (generic.from == f)
+                    {
+                        if (!CanBeAssignedTo(args[i].refferToType, _generics[generic.parameterIndex], out var cf))
+                            goto Break;
+                        else toConvert.Add(cf);
+                    }
+                    else throw new NotImplementedException();
+                }
+
+                else if (!CanBeAssignedTo(args[i].refferToType, parameters[i].type, out var cf))
+                    goto Break;
+                else toConvert.Add(cf);
+
+                if (args[i] is TypeDataRef @typeDataRef)
+                {
+                    _generics.Add(i, typeDataRef.type);
+                    continue;
+                }
+                
             }
 
             func = f;
@@ -194,27 +248,31 @@ public partial class Evaluator
 
         return (func, tconvert);
     }
-    public Function? TryGetOveloadDirect(FunctionGroup funcGroup, TypeReference[] types)
+    /// <summary>
+    /// Returns a valid function overload for the designed argument
+    /// types, not allowing type cast
+    /// </summary>
+    /// <param name="funcGroup">The function group</param>
+    /// <param name="types">The argument types</param>
+    /// <returns></returns>
+    public Function? TryGetOveloadDirect(FunctionGroup funcGroup, DataRef[] args)
     {
-        Function? func = null!;
-        
-        foreach (var f in funcGroup)
+        var (f, c) = TryGetOveloadIndirect(funcGroup, args);
+        if (c.Any(e => e == null)) return null;
+        return f;
+    }
+    public TypeReference GetFunctionReturnType(Function func, DataRef[] args)
+    {
+        var rtype = func.baseReturnType;
+        if (rtype is SolvedTypeReference) return rtype;
+
+        else if (rtype is GenericTypeReference @g)
         {
-            var parameters = f.parameters;
-
-            if (types.Length != parameters.Length) continue;
-            for (var i = 0; i < parameters.Length; i++)
-            {
-                if (!CanBeDirectlyAssignedTo(types[i], parameters[i].type)) goto Break;
-            }
-
-            func = f;
-            break;
-
-            Break: continue;
+            if (g.from == func) return ((TypeDataRef)args[g.parameterIndex]).type;
+            else throw new NotImplementedException();
         }
-
-        return func;
+        
+        else throw new NotImplementedException("I don't even remember if this is fucking possible");
     }
 
     public bool CanBeDirectlyAssignedTo(TypeReference b, TypeReference to)

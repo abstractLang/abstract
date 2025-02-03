@@ -14,19 +14,18 @@ public class Program
         return ProcessCommand([
             "compile", "MyProgram",
 
-            "-t", "wasm-text",
+            "-t", "elf",
 
             "-p", "Std",
-                "Libs/Std/Compilation.a",
-                "Libs/Std/Console.a",
-                "Libs/Std/Math.a",
-                "Libs/Std/Memory.a",
-                "Libs/Std/Meta.a",
-                "Libs/Std/Process.a",
-                "Libs/Std/System.a",
-                "Libs/Std/Types.a",
+                "Compilation.a",  //Libs/Std/
+                "Console.a",  //Libs/Std/
+                "Math.a",  //Libs/Std/
+                "Memory.a",  //Libs/Std/
+                "Meta.a",  //Libs/Std/
+                "Process.a",  //Libs/Std/
+                "System.a",  //Libs/Std/
+                "Types.a", //Libs/Std/
 
-            "-p", "MyProgram",
                 "../../../../test-code/main.a",
 
             "-o", "../../../../test-code/bin/",
@@ -133,7 +132,7 @@ public class Program
         Console.WriteLine("Try 'help' to more details.\n");
 
         Console.WriteLine("Compier options:");
-        Console.WriteLine("\t- compile; Compile the project");
+        Console.WriteLine("\t- compile # Compiles the project (bruh)");
     }
 }
 

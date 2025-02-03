@@ -45,13 +45,18 @@ public class ElfProgram {
         ElfProgram elfProgram = new();
 
         elfProgram._programName = builder.Root.identifier;
-        elfProgram._root = new(null!, 0, builder.Root.kind, builder.Root.identifier);
+        elfProgram._root = new(elfProgram, null!, 0, builder.Root.kind, builder.Root.identifier);
         elfProgram._allDirectories.Add((elfProgram._root));
+
+        elfProgram.hasentrypoint = builder.hasentrypoint;
+        elfProgram.hasdependence = builder.hasdependence;
+        elfProgram.linkable = builder.linkable;
 
         Stack<(Directory curr, Queue<DirBuilder> toBake)> baking
             = new([(elfProgram._root, new(builder.Root.Children))]);
 
-        Queue<(LumpBuilder, Stream)> _toSolveReferences = [];
+        Queue<(LumpBuilder, Stream)> _lumpsToBake = [];
+        Dictionary<DirBuilder, List<(uint dirID, long ptr)>> _refsToSolve = [];
 
         while(baking.Count > 0)
         {
@@ -60,18 +65,26 @@ public class ElfProgram {
             var next = toBake.Dequeue();
             
             Directory dir;
+
             if (next is LumpBuilder @lump)
             {
                 var data = new MemoryStream();
                 lump.Content.Position = 0;
                 lump.Content.CopyTo(data);
 
-                dir = new(curr, elfProgram._allDirectories.Count, next.kind, next.identifier, data);
-                _toSolveReferences.Enqueue((lump, data));
+                dir = new(elfProgram, curr, (uint)elfProgram._allDirectories.Count, next.kind, next.identifier, data);
+                _lumpsToBake.Enqueue((lump, data));
             }
             else
-                dir = new(curr, elfProgram._allDirectories.Count, next.kind, next.identifier, null);
+                dir = new(elfProgram, curr, (uint)elfProgram._allDirectories.Count, next.kind, next.identifier, null);
             elfProgram._allDirectories.Add(dir);
+
+            foreach (var r in next._externReferences)
+            {
+                if (_refsToSolve.TryGetValue(r.lump, out var values))
+                    values.Add((dir.index, r.ptr));
+                else _refsToSolve.Add(r.lump, [(dir.index, r.ptr)]);
+            }
 
             if (next.ChildrenCount > 0)
             {
@@ -80,18 +93,15 @@ public class ElfProgram {
             }
         }
 
-        while (_toSolveReferences.Count > 0)
+        while(_lumpsToBake.Count > 0)
         {
-            var (curr, data) = _toSolveReferences.Dequeue();
+            var (lump, stream) = _lumpsToBake.Dequeue();
+            if (!_refsToSolve.TryGetValue(lump, out var deps)) continue;
 
-            if (curr is CodeBuilder @code)
+            foreach (var (reference, ptr) in deps)
             {
-                foreach (var (ptr, r) in code.RefsAndDeps)
-                {
-                    var dir = elfProgram._allDirectories.Find(e => e.identifier == r)!;
-                    data.Position = ptr;
-                    data.WriteU32((uint)dir.index);
-                }
+                stream.Position = ptr;
+                stream.WriteDirectoryPtr(reference);
             }
         }
 
@@ -99,19 +109,83 @@ public class ElfProgram {
     }
 
 
+    public byte[] Emit()
+    {
+        using MemoryStream buffer = new();
+
+        List<string> dirKinds = [];
+        Dictionary<uint, string> dirNames = [];
+        Dictionary<uint, Stream> lumps = [];
+
+        // Header
+        buffer.Position = 0;
+        buffer.Write([0x7f, 0x41, 0x42, 0x53]); // magic ("\0x7fABS")
+        buffer.WriteByte(0); // TODO flags
+
+        var directoryPtr = buffer.WriteU32(uint.MaxValue);
+        var textdataPtr = buffer.WriteU32(uint.MaxValue);
+        var metadataPtr = buffer.WriteU32(uint.MaxValue);
+
+        // Directories
+        buffer.Position = 32;
+
+        foreach (var i in AllDirectories)
+        {
+            var idx = dirKinds.IndexOf(i.kind);
+            if (idx == -1)
+            {
+                idx = dirKinds.Count;
+                dirKinds.Add(i.kind);
+            }
+
+            buffer.WriteByte((byte)idx);
+            dirNames.Add(buffer.WriteU32(0), i.identifier);
+
+            if (i.content != null) // lump directory
+            {
+                buffer.WriteU32((uint)i.content.Length);
+                lumps.Add(buffer.WriteU32(0), i.content);
+            }
+        }
+
+        // Text & Data
+        foreach (var i in lumps)
+        {
+            // TODO do something bruh idk
+        }
+
+        // Identifiers
+        foreach (var i in dirKinds)
+            buffer.WriteFixedStringASCII(i, 8);
+        
+        foreach (var i in dirNames)
+        {
+            var idptr = buffer.WriteRawStringASCII(i.Value);
+            var baseptr = buffer.Position;
+            buffer.Position = i.Key;
+            buffer.WriteU32(idptr);
+            buffer.Position = baseptr;
+        }
+
+        return buffer.ToArray();
+    }
     public override string ToString()
     {
         var str = new StringBuilder();
 
-        str.AppendLine("(executable_and_linkable_format");
+        str.AppendLine("(elf");
 
-        str.AppendLine($"(dir_count       {_allDirectories.Count})");
-        str.AppendLine($"(has_entry_point {hasentrypoint})");
-        str.AppendLine($"(linkable        {linkable})");
-        str.AppendLine($"(has_dependency  {hasdependence})");
+        str.AppendLine($"  (;directory count: {_allDirectories.Count};)");
+        str.AppendLine($"  (flag \"has_entry_point\" ({hasentrypoint}))");
+        str.AppendLine($"  (flag \"linkable\"        ({linkable}))");
+        str.AppendLine($"  (flag \"has_dependency\"  ({hasdependence}))");
 
-        str.AppendLine(_root.ToString());
-        str.Append(')');
+        str.AppendLine();
+
+        var lines = _root.ToString().Split(Environment.NewLine);
+        foreach (var i in lines) str.AppendLine($"  {i}");
+        if (lines.Length > 0) str.Remove(str.Length-Environment.NewLine.Length, Environment.NewLine.Length);
+        str.AppendLine(")");
 
         return str.ToString();
     }

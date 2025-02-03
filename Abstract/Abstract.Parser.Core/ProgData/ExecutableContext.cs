@@ -1,18 +1,24 @@
+using Abstract.Build;
+using Abstract.Parser.Core.Exceptions.Evaluation;
+using Abstract.Parser.Core.Language.SyntaxNodes.Base;
+using Abstract.Parser.Core.Language.SyntaxNodes.Statement;
 using Abstract.Parser.Core.ProgData.DataReference;
 using Abstract.Parser.Core.ProgMembers;
 
 namespace Abstract.Parser.Core.ProgData;
 
-public class ExecutableCodeBlock
+public class ExecutableContext(SyntaxNode implementation, ExecutableContext? parentContext)
 {
+    public readonly ExecutableContext? parentContext = parentContext;
+    public readonly SyntaxNode implementationNode = implementation;
+
     public ProgramMember? ProgramMemberParent { get; set; }
     public Project? ParentProject => ProgramMemberParent?.ParentProject;
-    public ExecutableCodeBlock? BlockParent { get; set; }
+
 
     private Dictionary<MemberIdentifier, (int idx, TypeReference type)> _scopeParameters = [];
     private Dictionary<MemberIdentifier, (int idx, TypeReference type, bool constant)> _localVariables = [];
     private List<dynamic> _localConstants = [];
-
 
     public Dictionary<MemberIdentifier, (int idx, TypeReference type, bool constant)> LocalVariables => _localVariables;
 
@@ -24,10 +30,10 @@ public class ExecutableCodeBlock
 
         _scopeParameters.Add(name, ((-_scopeParameters.Count)-1, type));
     }
-    public void AppendLocalVariable(MemberIdentifier name, TypeReference type, bool isConstant)
+    public void AppendLocalVariable(MemberIdentifier name, TypeReference type, bool isConstant, LocalVariableNode node)
     {
         if (_scopeParameters.ContainsKey(name) || _localVariables.ContainsKey(name))
-            throw new Exception("TODO this shit is already registred bruh");
+            throw new LocalAlreadyDeclaratedException(node, name.ToString());
 
         _localVariables.Add(name, (_localVariables.Count, type, isConstant));
     }

@@ -2,11 +2,13 @@ using Abstract.Binutils.Abs.Bytecode;
 using Abstract.Binutils.Abs.Elf;
 using Abstract.Build;
 using Abstract.CompileTarget.Core.Enums;
+using Abstract.Parser.Core.Language.SyntaxNodes.Control;
 using Abstract.Parser.Core.Language.SyntaxNodes.Expression;
 using Abstract.Parser.Core.Language.SyntaxNodes.Statement;
 using Abstract.Parser.Core.Language.SyntaxNodes.Value;
 using Abstract.Parser.Core.ProgData;
 using Abstract.Parser.Core.ProgData.DataReference;
+using Abstract.Parser.Core.ProgData.FunctionExecution;
 using Abstract.Parser.Core.ProgMembers;
 using static Abstract.Binutils.Abs.Elf.ElfBuilder;
 
@@ -14,465 +16,393 @@ namespace Abstract.Parser;
 
 public class Compressor(ErrorHandler errHandler)
 {
-
     private readonly ErrorHandler _errHandler = errHandler;
 
     private Project _currentProject = null!;
-    private Dictionary<string,List<Dependence>> _dependences = [];
+    private ElfBuilder _builder = null!;
+    private Dictionary<ProgramMember, DirBuilder> _memberDirectoryMap = null!;
 
     public ElfProgram[] DoCompression(ProgramRoot program, ExpectedELFFormat expectedElfFormat)
     {
+        Queue<ElfBuilder> elfbuilders = [];
         List<ElfProgram> elfs = [];
+        _memberDirectoryMap = [];
 
-        // Each script should result in one ELF file
+        // Each project should result in one ELF object
         foreach (var i in program.projects)
         {
-            using var projectElf = CompressProject(i.Key, i.Value, program);
-            var bakedElf = ElfProgram.BakeBuilder(projectElf);
+            elfbuilders.Enqueue(CompressProject(i.Key, i.Value, program));
+        }
+
+        CompressAllMembers();
+
+        while (elfbuilders.Count > 0)
+        {
+            var c = elfbuilders.Dequeue();
+
+            var bakedElf = ElfProgram.BakeBuilder(c);
+            c.Dispose();
+
             elfs.Add(bakedElf);
         }
 
+        _memberDirectoryMap = null!;
         return LinkProgram([.. elfs], expectedElfFormat);
     }
 
-
     public ElfProgram[] LinkProgram(ElfProgram[] elfs, ExpectedELFFormat expectedElfFormat)
     {
-        if (expectedElfFormat == ExpectedELFFormat.onePerProject) return elfs;
+        //if (expectedElfFormat == ExpectedELFFormat.single) return elfs;
 
         
 
         return elfs;
     }
 
-
     private ElfBuilder CompressProject(string projectName, Project project, ProgramRoot program)
     {
-
         var elfBuilder = new ElfBuilder(projectName);
         var dirRoot = elfBuilder.Root;
 
+        _builder = elfBuilder;
         _currentProject = project;
-        _dependences.Clear();
 
         var projectdir = new DirectoryBuilder("PROJECT", project.identifier);
         //var includedir = new DirectoryBuilder("INCLUDE", "./");
 
         dirRoot.AppendChild(projectdir);
-        AppendProgramMembers(projectdir, project);
-        dirRoot.AppendChild(CompressDependences());
+
+        ScanAllChildren(project, projectdir);
+
+        if (project == program.MainProject) elfBuilder.hasentrypoint = true;
 
         _currentProject = null!;
+        _builder = null!;
 
         return elfBuilder;
     }
-    
 
-    private DirectoryBuilder[] CompressDependences()
+    #region Scan
+    private void ScanAllChildren(ProgramMember parent, DirBuilder parentDir)
     {
-        List<DirectoryBuilder> importDir = [];
-
-        foreach (var i in _dependences)
-        {
-            var elfref = new DirectoryBuilder("IMPORT", i.Key);
-            foreach (var j in i.Value)
-            {
-                var parent = new MetaBuilder('I' + j.kind, j.name);
-                elfref.AppendChild(parent);
-
-                if (j.source is Function @func)
-                {
-                    for (var k = 0; k < func.parameters.Length; k++)
-                    {
-                        var (type, name) = func.parameters[k];
-                        var p = new DirectoryBuilder("PARAM", $"{k:X4}");
-                        
-                        p.AppendChild(new DirectoryBuilder("TYPE", type.ToString()
-                            ?? throw new Exception()));
-                        p.AppendChild(new DirectoryBuilder("NAME", name));
-
-                        parent.AppendChild(p);
-
-                    }
-                 
-                    parent.AppendChild(new DirectoryBuilder("RET", func.returnType.ToString()
-                        ?? throw new Exception()));
-                }
-            }
-
-            importDir.Add(elfref);
-        }
-
-        return [.. importDir];
+        foreach (var i in parent.ChildrenNamespaces) ScanNamespace(i, parentDir);
+        foreach (var i in parent.ChildrenFields) ScanField(i, parentDir);
+        foreach (var i in parent.ChildrenFunctions) ScanFunctionGroup(i, parentDir);
+        foreach (var i in parent.ChildrenTypes) ScanStructure(i, parentDir);
+        foreach (var i in parent.ChildrenEnums) ScanEnum(i, parentDir);
     }
 
-    private void CompressProgramMember(DirectoryBuilder parent, ProgramMember member)
+    private void ScanNamespace(Namespace member, DirBuilder parent)
     {
-        string kind = "UNKNOWN";
-        if (member is Namespace) kind = "NMSP";
-        else if (member is Structure) kind = "TYPE";
-        else goto Others;
+        var header = new DirectoryBuilder("NMSP", member.identifier);
+        _memberDirectoryMap.Add(member, header);
 
-        var hdir = new DirectoryBuilder(kind, member.identifier);
-        hdir.AppendChild(new MetaBuilder("GLOBAL", member.GlobalReference));
+        AppendGlobal(member, header);
+        ScanAllChildren(member, header);
 
-        AppendProgramMembers(hdir, member);
-        parent.AppendChild(hdir);
+        parent.AppendChild(header);
+    }
+    private void ScanField(Field member, DirBuilder parent)
+    {
+        var header = new DirectoryBuilder("FIELD", member.identifier);
+        _memberDirectoryMap.Add(member, header);
 
-        Others:
+        AppendGlobal(member, header);
 
-        if (member is Field @field)
+        parent.AppendChild(header);
+    }
+    private void ScanFunctionGroup(FunctionGroup member, DirBuilder parent)
+    {
+        if (member.IsSingle)
         {
-            var lump = new LumpBuilder("FIELD", member.identifier);
-            lump.AppendChild(new MetaBuilder("GLOBAL", member.GlobalReference));
-            parent.AppendChild(lump);
+            ScanFunction(member.Overloads[0], parent);
         }
-
-        else if (member is FunctionGroup @funcGroup)
+        else
         {
-            if (funcGroup.IsSingle)
-            {
-                var f = funcGroup.Overloads[0];
+            var header = new DirectoryBuilder("FGROUP", member.identifier);
+            _memberDirectoryMap.Add(member, header);
 
-                var funcdir = new DirectoryBuilder("FUNC", f.identifier);
-                funcdir.AppendChild(new MetaBuilder("GLOBAL", member.GlobalReference));
-                CompressFunction(funcdir, f);
-                parent.AppendChild(funcdir);
-            }
-            else
-            {
-                var dir = new DirectoryBuilder("FGROUP", member.identifier);
-                
-                for (var i = 0; i < funcGroup.Overloads.Length; i++)
-                {
-                    var f = funcGroup.Overloads[i];
+            for (var i = 0; i < member.Overloads.Length; i++)
+                ScanFunction(member.Overloads[i], header, i);
 
-                    var funcdir = new DirectoryBuilder("FUNC", $"#overload_{i}");
-                    CompressFunction(funcdir, f);
-                    dir.AppendChild(funcdir);
-                }
-
-                parent.AppendChild(dir);
-            }
+            parent.AppendChild(header);
         }
+    }
+    private void ScanFunction(Function member, DirBuilder parent, int overloadIdx = -1)
+    {
+        var header = new DirectoryBuilder("FUNC", 
+            overloadIdx >= 0 ? $"#{overloadIdx:X}" : member.identifier);
+        _memberDirectoryMap.Add(member, header);
 
+        AppendGlobal(member, header);
+
+        parent.AppendChild(header);
+    }
+    private void ScanStructure(Structure member, DirBuilder parent)
+    {
+        var header = new DirectoryBuilder("TYPE", member.identifier);
+        _memberDirectoryMap.Add(member, header);
+
+        AppendGlobal(member, header);
+        ScanAllChildren(member, header);
+
+        parent.AppendChild(header);
+    }
+    private void ScanEnum(Enumerator member, DirBuilder parent)
+    {
+        var header = new DirectoryBuilder("ENUM", member.identifier);
+        _memberDirectoryMap.Add(member, header);
+
+        AppendGlobal(member, header);
+
+        parent.AppendChild(header);
+    }
+    #endregion
+
+    #region Compress
+    private void CompressAllMembers()
+    {
+        foreach (var i in _memberDirectoryMap)
+        {
+            if (i.Key is Namespace @a) CompressNamespace(a, i.Value);
+            else if (i.Key is Field @b) CompressField(b, i.Value);
+            else if (i.Key is FunctionGroup @c) CompressFunctionGroup(c, i.Value);
+            else if (i.Key is Function @d) CompressFunction(d, i.Value);
+            else if (i.Key is Structure @e) CompressStructure(e, i.Value);
+            else if (i.Key is Enumerator @f) CompressEnum(f, i.Value);
+        }
     }
 
-    private void CompressFunction(DirectoryBuilder builder, Function func)
+    // Nothing to do here (i think) lol
+    private void CompressNamespace(Namespace member, DirBuilder dir)
     {
+    }
+    private void CompressFunctionGroup(FunctionGroup member, DirBuilder dir)
+    {
+    }
 
-        var attrb = new LumpBuilder("META", "attrb");
+    // Complex things after here
+    private void CompressField(Field member, DirBuilder dir)
+    {
         
-        for(var i = 0; i < func.parameters.Length; i++)
+    }
+    private void CompressFunction(Function member, DirBuilder dir)
+    {
+        if (member.baseParameters.Length > 0)
         {
-            var param = new DirectoryBuilder("PARAM", $"{i:X4}");
+            var paramsLump = new DirectoryBuilder("META", "parameters");
+            foreach (var i in member.baseParameters)
+            {
+                var param = new LumpBuilder("PARAM", i.name);
 
-            var (type, name) = func.parameters[i];
-            CheckUseOfReference(type);
+                if (i.type is SolvedTypeReference @solved)
+                {
+                    param.Content.WriteByte((byte)ParameterTypes.solved);
+                    param.DirectoryReference(_memberDirectoryMap[solved.structure]);
+                }
+                else if (i.type is GenericTypeReference @generic)
+                {
+                    param.Content.WriteByte((byte)ParameterTypes.generic);
+                    param.DirectoryReference(_memberDirectoryMap[generic.from]);
+                    param.Content.WriteU16((ushort)generic.parameterIndex);
+                }
 
-            param.AppendChild(new DirectoryBuilder("TYPE", type.ToString() ?? throw new Exception()));
-            param.AppendChild(new DirectoryBuilder("NAME", name));
-
-            builder.AppendChild(param);
+                paramsLump.AppendChild(param);
+            }
+            dir.AppendChild(paramsLump);
         }
-        if (func.returnType != null)
-            builder.AppendChild(new DirectoryBuilder("RET", func.returnType.ToString() ?? throw new Exception()));
-        else Console.WriteLine($"{func} returning type was null");
 
-        builder.AppendChild(attrb);
-
-        // Code block
-        if (func.FunctionBodyNode?.EvaluatedData != null)
+        if (member.HasAnyImplementation())
         {
-            var bodyMeta = func.FunctionBodyNode.EvaluatedData;
-            var body = func.FunctionBodyNode;
-
             var code = new CodeBuilder("main");
             var data = new LumpBuilder("DATA", "main");
 
-            builder.AppendChild(code);
-            builder.AppendChild(data);
+            ParseContext(member.implementations[0].value.ctx, code, data);
 
-            foreach (var i in bodyMeta.LocalVariables)
+            dir.AppendChild(code);
+            if (data.Content.Length > 0) dir.AppendChild(data);
+        }
+
+    }
+    private void CompressStructure(Structure member, DirBuilder dir)
+    {
+        var headerLump = new LumpBuilder("META", "structheader");
+        headerLump.Content.WriteU32((uint)Math.Max(member.bitsize, member.aligin));
+        dir.AppendChild(headerLump);
+
+        if (member.generics.Count > 0)
+        {
+            var paramsLump = new DirectoryBuilder("META", "parameters");
+            foreach (var i in member.generics)
             {
-                code.WriteOpCode(Base.LdPType, [GetAsmType(i.Value.type)]);
-            }
+                var param = new LumpBuilder("PARAM", i.Key);
 
-            //                                builtin,                              structs
-            code.WriteOpCode(Base.EnterFrame, (short)bodyMeta.LocalVariables.Count, (short)0);
-
-            foreach (var i in body.Content)
-            {
-                if (i is StatementNode @statement) AssembleStatement(code, statement);
-                else if (i is ExpressionNode @expression) AssembleExpression(code, expression);
-            }
-
-            code.WriteOpCode(Base.LeaveFrame);
-            code.WriteOpCode(Base.Ret);
-
-            code.Bake();
-        }
-        
-    }
-
-    private void AppendProgramMembers(DirectoryBuilder builder, ProgramMember member)
-    {
-        foreach (var i in member.ChildrenNamespaces)
-            CompressProgramMember(builder, i);
-
-        foreach (var i in member.ChildrenFields)
-            CompressProgramMember(builder, i);
-        
-        foreach (var i in member.ChildrenFunctions)
-            CompressProgramMember(builder, i);
-
-        foreach (var i in member.ChildrenTypes)
-            CompressProgramMember(builder, i);
-
-        foreach (var i in member.ChildrenEnums)
-            CompressProgramMember(builder, i);
-    }
-
-
-    private void AssembleStatement(CodeBuilder builder, StatementNode node)
-    {
-        if (node is ReturnStatementNode @return)
-        {
-            builder.WriteOpCode(Base.Ret);
-        }
-        else Console.WriteLine("Unhandled stat: " + node.GetType().Name);
-    }
-
-    private void AssembleExpression(CodeBuilder builder, ExpressionNode node)
-    {
-        if (node is AssignmentExpressionNode @assignment)
-        {
-            if (assignment.ConvertRight is not null)
-                AssembleCall(builder, assignment.ConvertRight, [assignment.Right]);
-            else AssembleExpression(builder, assignment.Right);
-            
-            if (assignment.Left.DataReference is LocalDataRef @localData)
-                builder.WriteOpCode(Base.SetLocal, (ushort)localData.GetIndex);
-            
-            else throw new Exception();
-        }
-
-        else if (node is BinaryExpressionNode @binary)
-        {
-            if (binary.ConvertLeft is not null)
-                AssembleCall(builder, binary.ConvertLeft, [binary.Left]);
-            else AssembleExpression(builder, binary.Left);
-
-            if (binary.ConvertRight is not null)
-                AssembleCall(builder, binary.ConvertRight, [binary.Right]);
-            else AssembleExpression(builder, binary.Right);
-            
-            AssembleCall(builder, binary.Operate, null!);
-        }
-
-        else if (node is FunctionCallExpressionNode @funcCall)
-        {
-            AssembleCall(builder, funcCall.FunctionTarget, funcCall.Arguments);
-        }
-
-
-        else AssembleLoadValue(builder, node);
-    }
-
-    private void AssembleLoadValue(CodeBuilder builder, ExpressionNode node)
-    {
-        if (node is IdentifierCollectionNode @identifier)
-        {
-            if (identifier.DataReference is LocalDataRef @local)
-                builder.WriteOpCode(Base.LdLocal, (ushort)local.GetIndex);
-
-            else throw new Exception();
-        }
-
-        else if (node is StringLiteralNode @strlit)
-            builder.WriteOpCode(Base.LdConst, Types.Str, strlit.BuildStringContent());
-
-        else throw new NotImplementedException("Unhandled exp: " + node.GetType().Name);
-    }
-
-
-    private void AssembleCall(CodeBuilder builder, Function target, ExpressionNode[] args)
-    {
-        // Check if it is a hardcoded call
-        var fref = target.GlobalReference.tokens;
-        if (fref[0] == "Std")
-        {
-            if (fref[1] == "Compilation")
-            {
-
-                if (fref.Length == 5 && fref[2] == "Types"
-                && fref[3].StartsWith("Comptime") && fref[4].StartsWith("as"))
+                if (i.Value is SolvedTypeReference @solved)
                 {
-                    if (fref[3] == "ComptimeInteger")
-                    {
-                        var value = (IntegerLiteralNode)args[0];
-
-                        switch (fref[4])
-                        {
-                            case "asi8": builder.WriteOpCode(Base.LdConst, Types.i8, (sbyte)value.Value); break;
-                            case "asu8": builder.WriteOpCode(Base.LdConst, Types.u8, (byte)value.Value); break;
-                            
-                            case "asi16": builder.WriteOpCode(Base.LdConst, Types.i16, (short)value.Value); break;
-                            case "asu16": builder.WriteOpCode(Base.LdConst, Types.u16, (ushort)value.Value); break;
-
-                            case "asi32": builder.WriteOpCode(Base.LdConst, Types.i32, (int)value.Value); break;
-                            case "asu32": builder.WriteOpCode(Base.LdConst, Types.u32, (uint)value.Value); break;
-
-                            case "asi64": builder.WriteOpCode(Base.LdConst, Types.i64, (long)value.Value); break;
-                            case "asu64": builder.WriteOpCode(Base.LdConst, Types.u64, (ulong)value.Value); break;
-
-                            case "asi128": builder.WriteOpCode(Base.LdConst, Types.i128, (Int128)value.Value); break;
-                            case "asu128": builder.WriteOpCode(Base.LdConst, Types.u128, (UInt128)value.Value); break;
-
-                            default: throw new Exception();
-                        }
-
-                        return;
-                    }
-
-                    switch (fref[3..])
-                    {
-                        case ["ComptimeString", "asstring"]:
-                            var value = ((StringLiteralNode)args[0]).BuildStringContent();
-                            builder.WriteOpCode(Base.LdConst, Types.Str, value);
-                            return;
-
-                        default: throw new Exception();
-                    }
+                    param.Content.WriteByte((byte)ParameterTypes.solved);
+                    param.DirectoryReference(_memberDirectoryMap[solved.structure]);
+                }
+                else if (i.Value is GenericTypeReference @generic)
+                {
+                    param.Content.WriteByte((byte)ParameterTypes.generic);
+                    param.DirectoryReference(_memberDirectoryMap[generic.from]);
+                    param.Content.WriteU16((ushort)generic.parameterIndex);
                 }
 
+                paramsLump.AppendChild(param);
             }
-            else if (fref[1] == "Types" && fref.Length == 4)
+            dir.AppendChild(paramsLump);
+        }
+    }
+    private void CompressEnum(Enumerator member, DirBuilder dir)
+    {
+
+    }
+    #endregion
+
+    #region Parse executable contexts
+    private void ParseContext(ExecutableContext ctx, CodeBuilder code, LumpBuilder data)
+    {
+        if (ctx.implementationNode is BlockNode @block)
+            foreach (var i in @block.Content)
             {
-                if (fref[2].StartsWith("UnsignedInteger") || fref[2].StartsWith("SignedInteger"))
-                {
-                    if ((fref[3].StartsWith("cast_i")
-                        || fref[3].StartsWith("cast_u"))
-                        && target.parameters.Length == 1)
-                    {
-                        builder.WriteOpCode(Base.Conv,
-                            GetAsmType(args[0].DataReference.refferToType),
-                            GetAsmType(target.returnType));
-                        
-                        return;
-                    }
-                }
+                if (i is ExpressionNode @e) LoadExpression(e, code, data);
+                else if (i is StatementNode @s) ParseStatement(s, code, data);
             }
-        }
 
-
-        // Load arguments on stack
-        foreach (var i in args ?? []) AssembleExpression(builder, i);
-        // Invoke the function
-        CheckUseOfReference(target);
-        builder.WriteOpCode(Base.Call, GetAsmType(target.returnType),
-            $"{target.GlobalReference}({string.Join(", ", target.parameters.Select(e => e.type))})");
-
+        else Console.WriteLine($"unhandled context node {ctx}");
     }
 
-    private static Types GetAsmType(TypeReference typeRef)
+    private void LoadExpression(ExpressionNode node, CodeBuilder code, LumpBuilder data)
     {
-        if (typeRef is SolvedTypeReference @solved)
+        if (node is FunctionCallExpressionNode @call)
         {
-            if (!solved.structure.GlobalReference.ToString().StartsWith("Std.Types."))
-                return Types.Struct;
-            
-            return solved.structure.GlobalReference.tokens[2..] switch {
-
-                ["SignedInteger8"] => Types.i8,
-                ["SignedInteger16"] => Types.i16,
-                ["SignedInteger32"] => Types.i32,
-                ["SignedInteger64"] => Types.i64,
-                ["SignedInteger128"] => Types.i128,
-
-                ["UnsignedInteger8"] => Types.u8,
-                ["UnsignedInteger16"] => Types.u16,
-                ["UnsignedInteger32"] => Types.u32,
-                ["UnsignedInteger64"] => Types.u64,
-                ["UnsignedInteger128"] => Types.u128,
-
-                ["Single"] => Types.f32,
-                ["Double"] => Types.f64,
-
-                ["String"] => Types.Str,
-                ["Character"] => Types.Str,
-
-                ["Boolean"] => Types.Bool,
-
-                ["Void"] => Types.Void,
-                ["null"] => Types.Null,
-
-                ["Collections", "Array"] => Types.Arr,
-
-                _ => Types.Struct
-            };
+            foreach (var i in call.Arguments) LoadExpression(i, code, data);
+            ParseCall(((AbstractCallable)call.FunctionTarget).target, call.DataReference.refferToType, code, data);
         }
-        else return Types.Struct;
-    }
 
-
-    private void CheckUseOfReference(ProgramMember member)
-    {
-        var memberProj = member.ParentProject!;
-        if (_currentProject != memberProj)
+        else if (node is AssignmentExpressionNode @assigin)
         {
-            var projName = memberProj.identifier;
-            if (_dependences.TryGetValue(projName, out var deps))
+            LoadExpression(assigin.Right, code, data);
+
+            var dataref = assigin.Left.DataReference;
+
+            if (dataref is LocalDataRef @local)
             {
-                var r = new Dependence(GetMemberReferenceIdentifier(member), member);
-                if (!deps.Contains(r)) deps.Add(r);
+                if (local.GetIndex > sbyte.MaxValue || local.GetIndex < sbyte.MinValue)
+                    code.SetLocal((short)local.GetIndex);
+                else code.SetLocal((sbyte)local.GetIndex);
             }
-            else _dependences.Add(projName,
-                [new Dependence(GetMemberReferenceIdentifier(member), member)]);
+
+            else Console.WriteLine($"unhandled dataref {dataref} ({dataref.GetType().Name})");
         }
-    }
-    private void CheckUseOfReference(TypeReference type)
-    {
-        if (type is SolvedTypeReference @solved)
+
+        else if (node is BinaryExpressionNode @binexp)
         {
-            var memberProj = solved.structure.ParentProject!;
-            if (_currentProject != memberProj)
+            LoadExpression(binexp.Left, code, data);
+            if (binexp.ConvertLeft != null) ParseCall(binexp.ConvertLeft, binexp.ConvertLeft.baseReturnType, code, data);
+            LoadExpression(binexp.Right, code, data);
+            if (binexp.ConvertRight != null) ParseCall(binexp.ConvertRight, binexp.ConvertRight.baseReturnType, code, data);
+            ParseCall(binexp.Operate, binexp.Operate.baseReturnType, code, data);
+        }
+
+        else if (node is IdentifierCollectionNode @identifier)
+        {
+            var dataref = identifier.DataReference;
+
+            if (dataref is LocalDataRef @local)
             {
-                var projName = memberProj.identifier;
-                if (_dependences.TryGetValue(projName, out var deps))
-                {
-                    var r = new Dependence(GetMemberReferenceIdentifier(solved.structure), solved.structure);
-                    if (!deps.Contains(r)) deps.Add(r);
-                }
-                else _dependences.Add(projName,
-                    [new Dependence(GetMemberReferenceIdentifier(solved.structure), solved.structure)]);
+                if (local.GetIndex > sbyte.MaxValue || local.GetIndex < sbyte.MinValue)
+                    code.LdLocal((short)local.GetIndex);
+                else code.LdLocal((sbyte)local.GetIndex);
             }
+
+            else Console.WriteLine($"unhandled dataref {dataref} ({dataref.GetType().Name})");
         }
-        else if (type is GenericTypeReference) { /* ignore for now lol */ }
 
-        else return;//throw new NotImplementedException();
+        else if (node is StringLiteralNode @stringlit)
+        {
+            // TODO see a way to do not repeat strings in static memory
+            var stringValue = stringlit.BuildStringContent();
+            var ptr = data.Content.WriteStringUTF8(stringValue);
+            code.LdConst_str(ptr);
+        }
+        else if (node is IntegerLiteralNode @intlit)
+        {
+            // FIXME IntegerLiteralNode needs to be converted
+            // to a valid runtime integer
+            code.LdConst_iptr((long)intlit.Value);
+        }
+
+        else if (node is TypeExpressionNode @typeExpression)
+        {
+            // FIXME remove this placeholder and implement it
+            code.Nop();
+        }
+
+
+        else Console.WriteLine($"Unhandled expression {node} ({node.GetType().Name})");
     }
-
-    private static (string kind, string identifier) GetMemberReferenceIdentifier(ProgramMember member)
+    private void ParseStatement(StatementNode node, CodeBuilder code, LumpBuilder data)
     {
-        if (member is Function @func)
+        if (node is ReturnStatementNode @ret)
         {
-            return ("FUNC", $"{func.GlobalReference}({string
-            .Join(", ", func.parameters.Select(e => e.type))})");
+            if (ret.HasExpression) LoadExpression(ret.Expression!, code, data);
         }
-
-        else if (member is Structure @struc)
-        {
-            return ("TYPE", $"{struc.GlobalReference}");
-        }
-
-        else throw new NotImplementedException();
+        else Console.WriteLine($"Unhandled statement {node} ({node.GetType().Name})");
     }
 
 
-    private struct Dependence((string kind, string name) identifier, ProgramMember src) {
-        public string kind = identifier.kind;
-        public string name = identifier.name;
-        public ProgramMember source = src;
+    private void ParseCall(Function target, TypeReference returntype, CodeBuilder code, LumpBuilder data)
+    {
+        // FIXME handle better all these exceptions
+
+        Structure returnstruct = null!;
+
+        if (returntype is SolvedTypeReference @solved)
+            returnstruct = solved.structure;
+
+        else if (returntype is GenericTypeReference @generic)
+        {
+            if (generic.from == target)
+                throw new NotImplementedException();
+
+            else throw new NotImplementedException();
+        }
+
+        if (returnstruct == null) throw new Exception();
+
+        var align = (uint)Math.Max(returnstruct.bitsize, returnstruct.aligin);
+        var funcdir = _memberDirectoryMap[target];
+        switch (align)
+        {
+            case 0:   code.Call_void(funcdir); break;
+
+            case 1:   code.Call_i1(funcdir); break;
+            case 8:   code.Call_i8(funcdir); break;
+            case 16:  code.Call_i16(funcdir); break;
+            case 32:  code.Call_i32(funcdir); break;
+            case 64:  code.Call_i64(funcdir); break;
+            case 128: code.Call_i128(funcdir); break;
+
+            // FIXME implement uptr and iptr handler here
+
+            default:
+                code.Call_i_immu8((byte)align, funcdir);
+                break;
+        }
+    }
+    #endregion
+
+    private void AppendGlobal(ProgramMember member, DirBuilder dir)
+    {
+        var global = new DirectoryBuilder("GLOBAL", member.GlobalReference);
+        dir.AppendChild(global);
+    }
+
+    private enum ParameterTypes: byte
+    {
+        solved = 0,
+        generic = 1
     }
 }

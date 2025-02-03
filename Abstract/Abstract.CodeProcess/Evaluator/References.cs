@@ -16,8 +16,9 @@ public partial class Evaluator
 
         foreach (var _type in program.types.Values.ToArray())
         {
-            if (_type.TryGetAttribute("defineGlobal", out var attrib))
-                ExecuteAttrtribute(_type, attrib);
+            MemberAttribute attrib;
+            if (_type.TryGetAttribute("defineGlobal", out attrib)) ExecuteAttrtribute(_type, attrib);
+            if (_type.TryGetAttribute("aligin", out attrib)) ExecuteAttrtribute(_type, attrib);
         }
         
         // registring uptr and sptr FIXME
@@ -217,6 +218,15 @@ public partial class Evaluator
                 member.ParentProgram!.MainProject = member.ParentProject;
             }
         }
+    
+        else if (attrib.Name == "aligin")
+        {
+            var t = (Structure)member;
+            if (attrib.Arguments?.Length != 1) throw new Exception("TODO no function overload with X arguments");
+            if (attrib.Arguments[0] is not IntegerLiteralNode i) throw new Exception("TODO no function overload matching types");
+
+            t.aligin = (int)i.Value;
+        }
     }
 
     private static readonly string[] allowedOperatorOverloading= [
@@ -234,9 +244,9 @@ public partial class Evaluator
     {
         if (func.parent is not Structure @parent)
             throw new Exception($"TODO function parent must be a structure!");
-        if (func.parameters[0].type is not SolvedTypeReference @solvedP1)
+        if (func.baseParameters[0].type is not SolvedTypeReference @solvedP1)
             throw new Exception($"TODO unable to solve parameter 1 type!");
-        if (func.returnType is not SolvedTypeReference @solvedrt)
+        if (func.baseReturnType is not SolvedTypeReference @solvedrt)
             throw new Exception($"TODO unable to solve returning type!");
 
         var p1 = solvedP1.structure;

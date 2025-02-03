@@ -29,6 +29,7 @@ public abstract class ProgramMember(ProgramMember? parent, MemberIdentifier iden
     public virtual MemberIdentifier GlobalReference
         => parent != null ? parent.GlobalReference + identifier : identifier;
 
+
     #region tree
     public void AppendChild(ProgramMember child)
     {
